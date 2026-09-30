@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build output
+/dist
+/build
+/public/build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+phpunit.result.cache
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Local database and caches
+*.sqlite
+*.sqlite3
+.cache/
+coverage/
+
+# Uploaded/generated files
+storage/*.key
+storage/logs/*.log
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
