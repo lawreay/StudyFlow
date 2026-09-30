@@ -16,15 +16,21 @@ class Attempt extends Model
         'user_id',
         'subject_id',
         'topic_id',
+        'started_at',
         'score',
         'correct_answers',
         'total_questions',
+        'current_question_index',
+        'duration_seconds',
         'completed_at',
     ];
 
     protected function casts(): array
     {
-        return ['completed_at' => 'datetime'];
+        return [
+            'started_at' => 'datetime',
+            'completed_at' => 'datetime',
+        ];
     }
 
     public function user(): BelongsTo
@@ -40,7 +46,8 @@ class Attempt extends Model
     public function questions(): BelongsToMany
     {
         return $this->belongsToMany(Question::class, 'attempt_questions')
-            ->withPivot('points')
+            ->withPivot(['points', 'position'])
+            ->orderByPivot('position')
             ->withTimestamps();
     }
 
