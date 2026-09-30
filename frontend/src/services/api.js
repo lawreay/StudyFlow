@@ -2,12 +2,15 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000
 
 async function request(path, options = {}) {
   const { headers: requestHeaders = {}, ...requestOptions } = options;
+  const headers = { ...requestHeaders };
+
+  if (!(requestOptions.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...requestOptions,
-    headers: {
-      'Content-Type': 'application/json',
-      ...requestHeaders,
-    },
+    headers,
   });
 
   const payload = await response.json().catch(() => ({}));
@@ -39,4 +42,25 @@ export const api = {
       body: JSON.stringify(data),
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     }),
+  patch: (path, data, token) =>
+    request(path, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }),
+  delete: (path, token) =>
+    request(path, {
+      method: 'DELETE',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }),
+  upload: (path, file, token) => {
+    const body = new FormData();
+    body.append('file', file);
+
+    return request(path, {
+      method: 'POST',
+      body,
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+  },
 };
