@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\StudentDashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/attempts/{attempt}', [AttemptController::class, 'show']);
     Route::patch('/attempts/{attempt}/position', [AttemptController::class, 'updatePosition']);
     Route::post('/attempts/{attempt}/answers', [AttemptController::class, 'submitAnswer']);
+    Route::post('/attempts/{attempt}/complete', [AttemptController::class, 'complete']);
 
     Route::get('/progress', [ProgressController::class, 'index']);
+    Route::get('/dashboard', StudentDashboardController::class);
 
     Route::prefix('admin')->middleware('admin')->group(function () {
         Route::get('/dashboard', AdminDashboardController::class);

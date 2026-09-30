@@ -104,47 +104,40 @@ class AttemptController extends ApiController
                 ]);
             }
 
-            if ($attemptRecord->answers()->where('question_id', $question->id)->exists()) {
-                throw ValidationException::withMessages([
-                    'question_id' => ['An answer has already been submitted for this question.'],
-                ]);
-            }
-
             $correct = (bool) $selectedOption->is_correct;
-            $answer = AttemptAnswer::create([
-                'attempt_id' => $attemptRecord->id,
-                'question_id' => $question->id,
-                'selected_option_id' => $selectedOption->id,
-                'is_correct' => $correct,
-                'marks_earned' => $correct ? (int) $pivot->pivot->points : 0,
-            ]);
+            $answer = $attemptRecord->answers()->updateOrCreate(
+                ['question_id' => $question->id],
+                [
+                    'selected_option_id' => $selectedOption->id,
+                    'is_correct' => $correct,
+                    'marks_earned' => $correct ? (int) $pivot->pivot->points : 0,
+                ],
+            );
 
             $answers = $attemptRecord->answers()->get();
-            $completed = $answers->count() === $attemptRecord->total_questions;
             $attemptRecord->update([
                 'score' => $answers->sum('marks_earned'),
                 'correct_answers' => $answers->where('is_correct', true)->count(),
                 'duration_seconds' => max(0, (int) $attemptRecord->started_at?->diffInSeconds(now())),
-                'completed_at' => $completed ? now() : null,
             ]);
 
             $progress = PlayerProgress::firstOrNew(['user_id' => $request->user()->id]);
             $progress->subject_id = $attemptRecord->subject_id;
             $progress->topic_id = $attemptRecord->topic_id;
-            $progress->completed_questions = (int) $progress->completed_questions + 1;
-            $progress->xp = (int) $progress->xp + ($correct ? 10 : 0);
+            $userAnswers = AttemptAnswer::whereHas('attempt', fn ($query) => $query->where('user_id', $request->user()->id));
+            $totalAnswered = (clone $userAnswers)->count();
+            $totalCorrect = (clone $userAnswers)->where('is_correct', true)->count();
+            $progress->completed_questions = $totalAnswered;
+            $progress->xp = $totalCorrect * 10;
             $progress->level = match (true) {
                 $progress->xp >= 500 => 4,
                 $progress->xp >= 250 => 3,
                 $progress->xp >= 100 => 2,
                 default => 1,
             };
-            $totalAnswered = AttemptAnswer::whereHas('attempt', fn ($query) => $query->where('user_id', $request->user()->id))->count();
-            $totalCorrect = AttemptAnswer::whereHas('attempt', fn ($query) => $query->where('user_id', $request->user()->id))
-                ->where('is_correct', true)
-                ->count();
             $progress->accuracy = round(($totalCorrect / $totalAnswered) * 100, 2);
-            $progress->score = (int) $progress->score + (int) $answer->marks_earned;
+            $progress->score = AttemptAnswer::whereHas('attempt', fn ($query) => $query->where('user_id', $request->user()->id))
+                ->sum('marks_earned');
             $progress->save();
 
             $attemptRecord->load(['questions.options', 'questions.topic', 'answers.question', 'answers.selectedOption']);
@@ -206,5 +199,45 @@ class AttemptController extends ApiController
         $attemptRecord->load(['questions.options', 'questions.topic', 'answers.question', 'answers.selectedOption']);
 
         return $this->success((new AttemptResource($attemptRecord))->resolve(), 'Question position saved');
+    }
+
+    public function complete(Request $request, int $attempt)
+    {
+        $attemptRecord = Attempt::where('user_id', $request->user()->id)
+            ->with('questions')
+            ->findOrFail($attempt);
+
+        if ($attemptRecord->completed_at !== null) {
+            return $this->success([
+                'attempt' => (new AttemptResource($attemptRecord->load(['answers.question', 'answers.selectedOption'])))->resolve(),
+            ], 'Attempt already completed');
+        }
+
+        $answeredIds = $attemptRecord->answers()->pluck('question_id')->all();
+        $unansweredIds = $attemptRecord->questions->pluck('id')->diff($answeredIds)->values();
+
+        if ($unansweredIds->isNotEmpty()) {
+            throw ValidationException::withMessages([
+                'unanswered_questions' => ['Answer every question before completing this quiz.'],
+            ]);
+        }
+
+        $attemptRecord->update([
+            'completed_at' => now(),
+            'duration_seconds' => max(0, (int) $attemptRecord->started_at?->diffInSeconds(now())),
+        ]);
+        $attemptRecord->load(['questions.options', 'questions.topic', 'answers.question', 'answers.selectedOption']);
+        $progress = PlayerProgress::where('user_id', $request->user()->id)->first();
+
+        return $this->success([
+            'attempt' => (new AttemptResource($attemptRecord))->resolve(),
+            'progress' => $progress ? [
+                'xp' => $progress->xp,
+                'level' => $progress->level,
+                'completed_questions' => $progress->completed_questions,
+                'accuracy' => (float) $progress->accuracy,
+                'score' => $progress->score,
+            ] : null,
+        ], 'Attempt completed');
     }
 }

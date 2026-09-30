@@ -45,10 +45,14 @@ class LearningAttemptTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.answer.is_correct', false)
             ->assertJsonPath('data.answer.marks_earned', 0)
-            ->assertJsonPath('data.attempt.is_completed', true)
+            ->assertJsonPath('data.attempt.is_completed', false)
             ->assertJsonPath('data.attempt.score', 3)
             ->assertJsonPath('data.attempt.correct_answers', 1)
             ->assertJsonPath('data.attempt.xp_earned', 10);
+
+        $this->postJson("/api/attempts/{$attemptId}/complete")
+            ->assertOk()
+            ->assertJsonPath('data.attempt.is_completed', true);
 
         $this->assertDatabaseHas('attempt_answers', [
             'attempt_id' => $attemptId,
@@ -81,7 +85,7 @@ class LearningAttemptTest extends TestCase
             ->assertJsonMissingPath('data.questions.0.options.0.is_correct');
     }
 
-    public function test_user_cannot_submit_the_same_question_twice(): void
+    public function test_user_can_change_an_answer_without_double_counting_progress(): void
     {
         $user = User::factory()->create();
         [$topic, $questions] = $this->createTopicWithQuestions();
@@ -95,11 +99,20 @@ class LearningAttemptTest extends TestCase
             'selected_option_id' => $questions[0]->options[0]->id,
         ];
 
-        $this->postJson("/api/attempts/{$attemptId}/answers", $answer)->assertOk();
         $this->postJson("/api/attempts/{$attemptId}/answers", $answer)
-            ->assertUnprocessable()
-            ->assertJsonPath('success', false)
-            ->assertJsonPath('message', 'Validation failed');
+            ->assertOk()
+            ->assertJsonPath('data.progress.xp', 10);
+        $this->postJson("/api/attempts/{$attemptId}/answers", $answer)
+            ->assertOk()
+            ->assertJsonPath('data.progress.xp', 10);
+
+        $answer['selected_option_id'] = $questions[0]->options[1]->id;
+        $this->postJson("/api/attempts/{$attemptId}/answers", $answer)
+            ->assertOk()
+            ->assertJsonPath('data.answer.is_correct', false)
+            ->assertJsonPath('data.progress.xp', 0);
+
+        $this->assertDatabaseCount('attempt_answers', 1);
     }
 
     public function test_attempt_is_private_and_xp_thresholds_update_levels(): void

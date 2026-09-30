@@ -61,6 +61,10 @@ class AttemptResumeTest extends TestCase
             'selected_option_id' => $questions[1]->options[0]->id,
         ])
             ->assertOk()
+            ->assertJsonPath('data.attempt.is_completed', false);
+
+        $completedResponse = $this->postJson("/api/attempts/{$resumed['id']}/complete")
+            ->assertOk()
             ->assertJsonPath('data.attempt.is_completed', true);
 
         $completed = $completedResponse->json('data.attempt');

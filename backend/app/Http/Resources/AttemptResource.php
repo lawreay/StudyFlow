@@ -33,6 +33,7 @@ class AttemptResource extends JsonResource
                 'selected_option_text' => $answer->selectedOption?->option_text,
                 'is_correct' => $answer->is_correct,
                 'marks_earned' => $answer->marks_earned,
+                'explanation' => $answer->question?->explanation,
             ])->values()),
             'questions' => QuestionResource::collection($this->whenLoaded('questions')),
         ];
