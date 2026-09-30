@@ -37,8 +37,13 @@ class AttemptController extends ApiController
                 'total_questions' => $topic->questions->count(),
             ]);
 
+            $attempt->started_at = now();
+            $attempt->save();
             $attempt->questions()->attach($topic->questions->mapWithKeys(
-                fn (Question $question) => [$question->id => ['points' => $question->points]],
+                fn (Question $question, int $position) => [$question->id => [
+                    'points' => $question->points,
+                    'position' => $position,
+                ]],
             )->all());
 
             return $attempt;

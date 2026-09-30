@@ -66,19 +66,19 @@ class LearningAttemptTest extends TestCase
         ]);
     }
 
-    public function test_question_endpoints_require_authentication_and_do_not_expose_answer_keys(): void
+    public function test_quiz_attempt_requires_authentication_and_does_not_expose_answer_keys(): void
     {
         [$topic, $questions] = $this->createTopicWithQuestions();
 
-        $this->getJson('/api/questions')
+        $this->postJson('/api/attempts', ['topic_id' => $topic->id])
             ->assertUnauthorized()
             ->assertJsonPath('success', false);
 
         $this->actingAs(User::factory()->create(), 'sanctum')
-            ->getJson("/api/questions/{$questions[0]->id}")
-            ->assertOk()
-            ->assertJsonPath('data.points', 3)
-            ->assertJsonMissingPath('data.options.0.is_correct');
+            ->postJson('/api/attempts', ['topic_id' => $topic->id])
+            ->assertCreated()
+            ->assertJsonPath('data.questions.0.points', 3)
+            ->assertJsonMissingPath('data.questions.0.options.0.is_correct');
     }
 
     public function test_user_cannot_submit_the_same_question_twice(): void
