@@ -17,6 +17,7 @@ class PlayerProgress extends Model
         'xp',
         'level',
         'completed_questions',
+        'accuracy',
         'score',
     ];
 

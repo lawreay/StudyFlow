@@ -16,6 +16,7 @@ class Question extends Model
         'topic_id',
         'question_text',
         'explanation',
+        'points',
     ];
 
     public function subject(): BelongsTo

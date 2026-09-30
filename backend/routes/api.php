@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AttemptController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubjectController;
@@ -28,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/questions', [QuestionController::class, 'index']);
     Route::get('/questions/{question}', [QuestionController::class, 'show']);
 
+    Route::post('/attempts', [AttemptController::class, 'store']);
+    Route::get('/attempts/{attempt}', [AttemptController::class, 'show']);
+    Route::post('/attempts/{attempt}/answers', [AttemptController::class, 'submitAnswer']);
+
     Route::get('/progress', [ProgressController::class, 'index']);
-    Route::post('/progress', [ProgressController::class, 'store']);
 });
