@@ -10,6 +10,8 @@ import RegisterPage from './pages/RegisterPage';
 import ResultsPage from './pages/ResultsPage';
 import SubjectSelectionPage from './pages/SubjectSelectionPage';
 import QuestionListPage from './pages/QuestionListPage';
+import QuestionFormPage from './pages/QuestionFormPage';
+import QuestionImportPage from './pages/QuestionImportPage';
 import TopicSelectionPage from './pages/TopicSelectionPage';
 import './App.css';
 
@@ -89,6 +91,9 @@ function App() {
           <Route path="/attempts/:attemptId/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><AdminRoute><AdminDashboardPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/questions" element={<ProtectedRoute><AdminRoute><QuestionListPage /></AdminRoute></ProtectedRoute>} />
+          <Route path="/admin/questions/new" element={<ProtectedRoute><AdminRoute><QuestionFormPage /></AdminRoute></ProtectedRoute>} />
+          <Route path="/admin/questions/:questionId/edit" element={<ProtectedRoute><AdminRoute><QuestionFormPage /></AdminRoute></ProtectedRoute>} />
+          <Route path="/admin/import" element={<ProtectedRoute><AdminRoute><QuestionImportPage /></AdminRoute></ProtectedRoute>} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
