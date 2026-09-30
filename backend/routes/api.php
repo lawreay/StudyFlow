@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/attempts', [AttemptController::class, 'store']);
     Route::get('/attempts/{attempt}', [AttemptController::class, 'show']);
+    Route::patch('/attempts/{attempt}/position', [AttemptController::class, 'updatePosition']);
     Route::post('/attempts/{attempt}/answers', [AttemptController::class, 'submitAnswer']);
 
     Route::get('/progress', [ProgressController::class, 'index']);

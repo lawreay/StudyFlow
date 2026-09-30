@@ -21,6 +21,18 @@ class AttemptController extends ApiController
             'topic_id' => ['required', 'integer', 'exists:topics,id'],
         ]);
 
+        $activeAttempt = Attempt::where('user_id', $request->user()->id)
+            ->where('topic_id', $validated['topic_id'])
+            ->whereNull('completed_at')
+            ->latest('id')
+            ->first();
+
+        if ($activeAttempt) {
+            $activeAttempt->load(['questions.options', 'questions.topic', 'answers.question', 'answers.selectedOption']);
+
+            return $this->success((new AttemptResource($activeAttempt))->resolve(), 'Attempt resumed');
+        }
+
         $topic = Topic::with('questions.options')->findOrFail($validated['topic_id']);
 
         if ($topic->questions->isEmpty()) {
@@ -49,7 +61,7 @@ class AttemptController extends ApiController
             return $attempt;
         });
 
-        $attempt->load(['questions.options', 'questions.topic', 'answers.question', 'answers.selectedOption']);
+        $attempt->refresh()->load(['questions.options', 'questions.topic', 'answers.question', 'answers.selectedOption']);
 
         return $this->success((new AttemptResource($attempt))->resolve(), 'Attempt started', 201);
     }
@@ -112,6 +124,7 @@ class AttemptController extends ApiController
             $attemptRecord->update([
                 'score' => $answers->sum('marks_earned'),
                 'correct_answers' => $answers->where('is_correct', true)->count(),
+                'duration_seconds' => max(0, (int) $attemptRecord->started_at?->diffInSeconds(now())),
                 'completed_at' => $completed ? now() : null,
             ]);
 
@@ -167,5 +180,31 @@ class AttemptController extends ApiController
             ->findOrFail($attempt);
 
         return $this->success((new AttemptResource($attemptRecord))->resolve(), 'Attempt loaded');
+    }
+
+    public function updatePosition(Request $request, int $attempt)
+    {
+        $validated = $request->validate([
+            'current_question_index' => ['required', 'integer', 'min:0'],
+        ]);
+
+        $attemptRecord = Attempt::where('user_id', $request->user()->id)->findOrFail($attempt);
+
+        if ($attemptRecord->completed_at !== null) {
+            throw ValidationException::withMessages([
+                'attempt' => ['A completed attempt cannot be resumed.'],
+            ]);
+        }
+
+        if ($validated['current_question_index'] >= $attemptRecord->total_questions) {
+            throw ValidationException::withMessages([
+                'current_question_index' => ['The question position is outside this attempt.'],
+            ]);
+        }
+
+        $attemptRecord->update(['current_question_index' => $validated['current_question_index']]);
+        $attemptRecord->load(['questions.options', 'questions.topic', 'answers.question', 'answers.selectedOption']);
+
+        return $this->success((new AttemptResource($attemptRecord))->resolve(), 'Question position saved');
     }
 }

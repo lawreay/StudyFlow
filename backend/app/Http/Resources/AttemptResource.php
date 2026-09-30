@@ -16,9 +16,15 @@ class AttemptResource extends JsonResource
             'score' => $this->score,
             'correct_answers' => $this->correct_answers,
             'total_questions' => $this->total_questions,
+            'current_question_index' => $this->current_question_index,
+            'started_at' => $this->started_at,
+            'completed_at' => $this->completed_at,
+            'duration_seconds' => $this->duration_seconds,
+            'elapsed_seconds' => $this->completed_at
+                ? $this->duration_seconds
+                : max($this->duration_seconds, (int) ($this->started_at?->diffInSeconds(now()) ?? 0)),
             'answered_questions' => $this->whenLoaded('answers', fn () => $this->answers->count()),
             'is_completed' => $this->completed_at !== null,
-            'completed_at' => $this->completed_at,
             'xp_earned' => $this->whenLoaded('answers', fn () => $this->answers->where('is_correct', true)->count() * 10),
             'answers' => $this->whenLoaded('answers', fn () => $this->answers->map(fn ($answer) => [
                 'question_id' => $answer->question_id,
