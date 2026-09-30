@@ -23,11 +23,12 @@ class AuthController extends ApiController
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
+        $user->refresh();
 
         $token = $user->createToken('studyflow-token')->plainTextToken;
 
         return $this->success([
-            'user' => $user->only(['id', 'name', 'email']),
+            'user' => $user->only(['id', 'name', 'email', 'is_admin']),
             'token' => $token,
         ], 'Registration successful');
     }
@@ -50,7 +51,7 @@ class AuthController extends ApiController
         $token = $user->createToken('studyflow-token')->plainTextToken;
 
         return $this->success([
-            'user' => $user->only(['id', 'name', 'email']),
+            'user' => $user->only(['id', 'name', 'email', 'is_admin']),
             'token' => $token,
         ], 'Login successful');
     }
@@ -58,7 +59,7 @@ class AuthController extends ApiController
     public function me(Request $request)
     {
         return $this->success([
-            'user' => $request->user()->only(['id', 'name', 'email']),
+            'user' => $request->user()->only(['id', 'name', 'email', 'is_admin']),
         ]);
     }
 

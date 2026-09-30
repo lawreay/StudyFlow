@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttemptController;
 use App\Http\Controllers\AdminQuestionController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubjectController;
@@ -35,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/progress', [ProgressController::class, 'index']);
 
     Route::prefix('admin')->middleware('admin')->group(function () {
+        Route::get('/dashboard', AdminDashboardController::class);
         Route::get('/questions', [AdminQuestionController::class, 'index']);
         Route::post('/questions', [AdminQuestionController::class, 'store']);
         Route::get('/questions/{question}', [AdminQuestionController::class, 'show']);
