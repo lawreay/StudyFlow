@@ -70,7 +70,9 @@ class LearningAttemptTest extends TestCase
     {
         [$topic, $questions] = $this->createTopicWithQuestions();
 
-        $this->getJson('/api/questions')->assertUnauthorized();
+        $this->getJson('/api/questions')
+            ->assertUnauthorized()
+            ->assertJsonPath('success', false);
 
         $this->actingAs(User::factory()->create(), 'sanctum')
             ->getJson("/api/questions/{$questions[0]->id}")
@@ -94,10 +96,52 @@ class LearningAttemptTest extends TestCase
         ];
 
         $this->postJson("/api/attempts/{$attemptId}/answers", $answer)->assertOk();
-        $this->postJson("/api/attempts/{$attemptId}/answers", $answer)->assertUnprocessable();
+        $this->postJson("/api/attempts/{$attemptId}/answers", $answer)
+            ->assertUnprocessable()
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'Validation failed');
     }
 
-    private function createTopicWithQuestions(): array
+    public function test_attempt_is_private_and_xp_thresholds_update_levels(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+        [$topic, $questions] = $this->createTopicWithQuestions(array_fill(0, 25, 1));
+        $attemptId = $this->actingAs($user, 'sanctum')
+            ->postJson('/api/attempts', ['topic_id' => $topic->id])
+            ->assertCreated()
+            ->json('data.id');
+
+        $this->actingAs($otherUser, 'sanctum')
+            ->getJson("/api/attempts/{$attemptId}")
+            ->assertNotFound();
+
+        $this->actingAs($user, 'sanctum');
+
+        foreach ($questions as $index => $question) {
+            $response = $this->postJson("/api/attempts/{$attemptId}/answers", [
+                'question_id' => $question->id,
+                'selected_option_id' => $question->options[0]->id,
+            ])->assertOk();
+
+            if ($index === 8) {
+                $response->assertJsonPath('data.progress.xp', 90)
+                    ->assertJsonPath('data.progress.level', 1);
+            }
+
+            if ($index === 9) {
+                $response->assertJsonPath('data.progress.xp', 100)
+                    ->assertJsonPath('data.progress.level', 2);
+            }
+
+            if ($index === 24) {
+                $response->assertJsonPath('data.progress.xp', 250)
+                    ->assertJsonPath('data.progress.level', 3);
+            }
+        }
+    }
+
+    private function createTopicWithQuestions(array $points = [3, 2]): array
     {
         $subject = Subject::create(['name' => 'Networking']);
         $topic = Topic::create([
@@ -105,7 +149,7 @@ class LearningAttemptTest extends TestCase
             'name' => 'OSI Model',
         ]);
 
-        $questions = collect([3, 2])->map(function (int $points) use ($subject, $topic): Question {
+        $questions = collect($points)->map(function (int $points) use ($subject, $topic): Question {
             $question = Question::create([
                 'subject_id' => $subject->id,
                 'topic_id' => $topic->id,

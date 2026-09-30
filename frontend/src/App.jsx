@@ -4,9 +4,11 @@ import DashboardPage from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
-import QuestionDemoPage from './pages/QuestionDemoPage';
+import QuizPage from './pages/QuizPage';
 import RegisterPage from './pages/RegisterPage';
-import SubjectsPage from './pages/SubjectsPage';
+import ResultsPage from './pages/ResultsPage';
+import SubjectSelectionPage from './pages/SubjectSelectionPage';
+import TopicSelectionPage from './pages/TopicSelectionPage';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -35,8 +37,7 @@ function App() {
           {token ? (
             <>
               <NavLink to="/dashboard">Dashboard</NavLink>
-              <NavLink to="/subjects">Subjects</NavLink>
-              <NavLink to="/questions">Questions</NavLink>
+              <NavLink to="/subjects">Study</NavLink>
             </>
           ) : (
             <>
@@ -71,23 +72,10 @@ function App() {
             }
           />
 
-          <Route
-            path="/subjects"
-            element={
-              <ProtectedRoute>
-                <SubjectsPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/questions"
-            element={
-              <ProtectedRoute>
-                <QuestionDemoPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/subjects" element={<ProtectedRoute><SubjectSelectionPage /></ProtectedRoute>} />
+          <Route path="/subjects/:subjectId/topics" element={<ProtectedRoute><TopicSelectionPage /></ProtectedRoute>} />
+          <Route path="/topics/:topicId/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
+          <Route path="/attempts/:attemptId/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
