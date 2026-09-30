@@ -4,7 +4,7 @@ export default function QuestionCard({ question, selectedOptionId, submitted, on
   return (
     <section className="question-card">
       <div className="question-card-heading">
-        <span>Question</span>
+        <span>{question.difficulty} question</span>
         <span>{question.points} {question.points === 1 ? 'point' : 'points'}</span>
       </div>
       <h2>{question.question_text}</h2>

@@ -34,6 +34,7 @@ export default function QuestionImportPage() {
   const importFile = async (event) => {
     event.preventDefault();
     if (!topicId || !file) return;
+    const formElement = event.currentTarget;
     setImporting(true);
     setError('');
     setMessage('');
@@ -42,7 +43,7 @@ export default function QuestionImportPage() {
       const response = await api.upload(`/admin/topics/${topicId}/questions/import`, file, token);
       setMessage(`${response.data.imported_count} questions imported.`);
       setFile(null);
-      event.currentTarget.reset();
+      formElement.reset();
     } catch (requestError) {
       const firstError = Object.values(requestError.errors || {})[0];
       setError(Array.isArray(firstError) ? firstError.join(' ') : requestError.message || 'Could not import questions.');

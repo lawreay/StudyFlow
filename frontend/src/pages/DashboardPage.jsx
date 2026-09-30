@@ -3,20 +3,39 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
+function formatDuration(seconds) {
+  const minutes = Math.floor((seconds || 0) / 60);
+  const remainder = (seconds || 0) % 60;
+
+  return `${minutes}m ${remainder}s`;
+}
+
 export default function DashboardPage() {
   const { user, token } = useAuth();
-  const [progress, setProgress] = useState([]);
+  const [dashboard, setDashboard] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!token) return;
+    let active = true;
 
-    api.get('/progress', token)
-      .then((response) => setProgress(response.data || []))
-      .catch((requestError) => setError(requestError.message || 'Could not load your progress.'))
-      .finally(() => setLoading(false));
+    api.get('/dashboard', token)
+      .then((response) => {
+        if (active) setDashboard(response.data);
+      })
+      .catch((requestError) => {
+        if (active) setError(requestError.message || 'Could not load your dashboard.');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => { active = false; };
   }, [token]);
+
+  const progress = dashboard?.progress;
+  const activeAttempt = dashboard?.active_attempt;
 
   return (
     <div className="learning-page dashboard-page">
@@ -26,22 +45,58 @@ export default function DashboardPage() {
         <p>Choose a topic and keep building your understanding.</p>
       </header>
       {error && <p className="error-banner" role="alert">{error}</p>}
-      {loading ? <p className="status-message">Loading your progress...</p> : (
-        <div className="dashboard-stats">
-          <article><span>Total XP</span><strong>{progress[0]?.xp || 0}</strong></article>
-          <article><span>Level</span><strong>{progress[0]?.level || 1}</strong></article>
-          <article><span>Questions answered</span><strong>{progress[0]?.completed_questions || 0}</strong></article>
-          <article><span>Accuracy</span><strong>{progress[0]?.accuracy || 0}%</strong></article>
-        </div>
+      {loading ? <p className="status-message">Loading your progress...</p> : dashboard && (
+        <>
+          <div className="dashboard-stats">
+            <article><span>Total XP</span><strong>{progress.xp}</strong></article>
+            <article><span>Level</span><strong>{progress.level}</strong></article>
+            <article><span>Completed quizzes</span><strong>{dashboard.completed_quizzes}</strong></article>
+            <article><span>Average score</span><strong>{dashboard.average_score_percent}%</strong></article>
+          </div>
+          <div className="dashboard-secondary-stats">
+            <span>{progress.completed_questions} questions answered</span>
+            <span>{progress.accuracy}% accuracy</span>
+          </div>
+          {activeAttempt ? (
+            <section className="dashboard-next-step">
+              <div>
+                <p className="eyebrow">Quiz in progress</p>
+                <h2>Continue your topic</h2>
+                <p>{activeAttempt.answered_questions} of {activeAttempt.total_questions} answered</p>
+              </div>
+              <Link to={`/topics/${activeAttempt.topic_id}/quiz`} className="primary-button">Resume quiz</Link>
+            </section>
+          ) : (
+            <section className="dashboard-next-step">
+              <div>
+                <p className="eyebrow">Next step</p>
+                <h2>Ready for another topic?</h2>
+                <p>Your answers and progress are saved as you study.</p>
+              </div>
+              <Link to="/subjects" className="primary-button">Choose a subject</Link>
+            </section>
+          )}
+          <section className="recent-activity">
+            <div className="recent-heading">
+              <h2>Recent activity</h2>
+              <Link to="/subjects">Study</Link>
+            </div>
+            {dashboard.recent_activity.length === 0 ? <p className="empty-message">Completed quizzes will appear here.</p> : (
+              <div className="activity-list">
+                {dashboard.recent_activity.map((activity) => (
+                  <article className="activity-row" key={activity.id}>
+                    <div>
+                      <strong>{activity.topic_name}</strong>
+                      <small>{activity.correct_answers} of {activity.total_questions} correct · {formatDuration(activity.duration_seconds)}</small>
+                    </div>
+                    <strong>{activity.score} pts</strong>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        </>
       )}
-      <section className="dashboard-next-step">
-        <div>
-          <p className="eyebrow">Next step</p>
-          <h2>Ready for another topic?</h2>
-          <p>Your answers and progress are saved as you study.</p>
-        </div>
-        <Link to="/subjects" className="primary-button">Choose a subject</Link>
-      </section>
     </div>
   );
 }

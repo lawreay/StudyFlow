@@ -4,6 +4,13 @@ import ScoreCard from '../components/ScoreCard';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
+function formatDuration(seconds) {
+  const minutes = Math.floor((seconds || 0) / 60);
+  const remainder = (seconds || 0) % 60;
+
+  return `${minutes}m ${remainder}s`;
+}
+
 export default function ResultsPage() {
   const { attemptId } = useParams();
   const location = useLocation();
@@ -46,7 +53,7 @@ export default function ResultsPage() {
       <header className="page-heading">
         <p className="eyebrow">Attempt complete</p>
         <h1>Your results</h1>
-        <p>You answered {attempt.total_questions} questions.</p>
+        <p>You answered {attempt.total_questions} questions in {formatDuration(attempt.duration_seconds)}.</p>
       </header>
       <div className="score-grid">
         <ScoreCard label="Score" value={`${attempt.score} pts`} detail={`${attempt.correct_answers} correct`} />
@@ -64,6 +71,7 @@ export default function ResultsPage() {
                 <div>
                   <h3>{answer.question_text}</h3>
                   <p>{answer.selected_option_text}</p>
+                  {answer.explanation && <p className="answer-explanation">{answer.explanation}</p>}
                 </div>
               </div>
               <strong className={answer.is_correct ? 'review-correct' : 'review-wrong'}>
