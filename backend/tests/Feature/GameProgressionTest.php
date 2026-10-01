@@ -203,6 +203,14 @@ class GameProgressionTest extends TestCase
 
         $this->assertSame(45, PlayerProgress::where('user_id', $user->id)->value('xp'));
         $this->assertSame(1, PlayerNodeProgress::where('user_id', $user->id)->count());
+        $this->assertDatabaseHas('reward_events', [
+            'user_id' => $user->id,
+            'type' => 'node_completion',
+            'reference_type' => 'game_node',
+            'reference_id' => $first->id,
+            'xp_amount' => 15,
+        ]);
+        $this->assertSame(1, \App\Models\RewardEvent::where('user_id', $user->id)->count());
     }
 
     private function createWorldNodes(?int $topicId = null, ?int $requiredScore = null): array
