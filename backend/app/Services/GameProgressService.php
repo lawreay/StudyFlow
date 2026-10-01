@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\GameNode;
 use App\Models\GameWorld;
+use App\Models\Attempt;
 use App\Models\PlayerNodeProgress;
 use App\Models\PlayerProgress;
 use App\Models\User;
@@ -82,6 +83,8 @@ class GameProgressService
                 ]);
             }
 
+            $this->validateLearningRequirement($user, $node);
+
             $nodeProgress = PlayerNodeProgress::where('user_id', $user->id)
                 ->where('game_node_id', $node->id)
                 ->lockForUpdate()
@@ -104,11 +107,47 @@ class GameProgressService
             $playerProgress ??= new PlayerProgress(['user_id' => $user->id]);
             $playerProgress->awardXp($node->reward_xp);
 
+            $nextAvailableNode = GameNode::where('world_id', $node->world_id)
+                ->where('position', '>', $node->position)
+                ->orderBy('position')
+                ->get()
+                ->first(fn (GameNode $candidate) => $this->isNodeUnlocked($user, $candidate)
+                    && ! PlayerNodeProgress::where('user_id', $user->id)
+                        ->where('game_node_id', $candidate->id)
+                        ->whereNotNull('completed_at')
+                        ->exists());
+
             return [
                 'node' => $node,
                 'node_progress' => $nodeProgress,
                 'player_progress' => $playerProgress,
+                'next_available_node' => $nextAvailableNode,
             ];
         });
+    }
+
+    private function validateLearningRequirement(User $user, GameNode $node): void
+    {
+        if ($node->topic_id === null) {
+            return;
+        }
+
+        $attempt = Attempt::where('user_id', $user->id)
+            ->where('topic_id', $node->topic_id)
+            ->whereNotNull('completed_at')
+            ->latest('completed_at')
+            ->first();
+
+        if ($attempt === null) {
+            throw ValidationException::withMessages([
+                'learning_activity' => ['Complete the linked topic quiz before completing this node.'],
+            ]);
+        }
+
+        if ($node->required_score !== null && $attempt->score < $node->required_score) {
+            throw ValidationException::withMessages([
+                'required_score' => ['The completed topic quiz did not meet the required score.'],
+            ]);
+        }
     }
 }

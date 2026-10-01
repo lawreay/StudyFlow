@@ -23,9 +23,18 @@ class GameWorldController extends ApiController
         $node->setAttribute('is_unlocked', true);
         $node->setAttribute('is_completed', true);
         $node->setAttribute('completed_at', $result['node_progress']->completed_at);
+        $nextNode = $result['next_available_node'];
+
+        if ($nextNode !== null) {
+            $nextNode->setAttribute('is_unlocked', true);
+            $nextNode->setAttribute('is_completed', false);
+            $nextNode->setAttribute('completed_at', null);
+        }
 
         return $this->success([
             'node' => (new GameNodeResource($node))->resolve(),
+            'reward_xp' => $node->reward_xp,
+            'next_available_node' => $nextNode ? (new GameNodeResource($nextNode))->resolve() : null,
             'progress' => [
                 'xp' => $result['player_progress']->xp,
                 'level' => $result['player_progress']->level,
