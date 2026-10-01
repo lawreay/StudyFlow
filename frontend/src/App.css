@@ -492,6 +492,94 @@ input {
   background: white;
 }
 
+.lesson-page {
+  max-width: 760px;
+}
+
+.lesson-hero {
+  margin: 1.5rem 0 2rem;
+  padding: clamp(1.25rem, 5vw, 2.5rem);
+  border: 1px solid #bfdbfe;
+  border-radius: 1.2rem;
+  background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+}
+
+.lesson-hero h1 {
+  max-width: 42rem;
+  margin-bottom: 0.7rem;
+}
+
+.lesson-hero > p:not(.eyebrow) {
+  max-width: 40rem;
+  margin-bottom: 1rem;
+  color: #334155;
+  font-size: 1.05rem;
+}
+
+.lesson-status {
+  display: inline-block;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.lesson-status.is-completed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.lesson-sections {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.lesson-section {
+  display: grid;
+  grid-template-columns: 2.8rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.lesson-section-number {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  border-radius: 0.7rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.lesson-section h2 {
+  margin-bottom: 0.4rem;
+  font-size: 1.1rem;
+}
+
+.lesson-section p,
+.lesson-next-step p:last-child {
+  margin-bottom: 0;
+  color: #475569;
+}
+
+.lesson-next-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+
+.lesson-next-step h2 {
+  margin-bottom: 0.35rem;
+}
+
 .quiz-progress {
   margin-bottom: 1.5rem;
 }
@@ -1141,7 +1229,8 @@ input {
 
   .dashboard-next-step,
   .quiz-actions,
-  .adventure-summary {
+  .adventure-summary,
+  .lesson-next-step {
     align-items: flex-start;
     flex-direction: column;
   }

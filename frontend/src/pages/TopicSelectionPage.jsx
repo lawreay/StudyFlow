@@ -41,7 +41,7 @@ export default function TopicSelectionPage() {
         {subject?.topics?.map((topic) => (
           <Link
             className={`selection-row${topic.questions_count === 0 ? ' is-unavailable' : ''}`}
-            to={topic.questions_count > 0 ? `/topics/${topic.id}/quiz` : '#'}
+            to={topic.questions_count > 0 ? (topic.has_lesson ? `/topics/${topic.id}/lesson` : `/topics/${topic.id}/quiz`) : '#'}
             aria-disabled={topic.questions_count === 0}
             onClick={(event) => topic.questions_count === 0 && event.preventDefault()}
             key={topic.id}
@@ -50,7 +50,7 @@ export default function TopicSelectionPage() {
               <strong>{topic.name}</strong>
               <small>{topic.description || `${topic.questions_count} questions`}</small>
             </span>
-            <span className="row-meta">{topic.questions_count} questions</span>
+            <span className="row-meta">{topic.has_lesson && !topic.lesson_completed ? 'Lesson first · ' : ''}{topic.questions_count} questions</span>
           </Link>
         ))}
       </div>

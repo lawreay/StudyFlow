@@ -15,6 +15,7 @@ import QuestionImportPage from './pages/QuestionImportPage';
 import TopicSelectionPage from './pages/TopicSelectionPage';
 import GameWorldPage from './pages/GameWorldPage';
 import LearningCompanion from './components/LearningCompanion';
+import LessonPage from './pages/LessonPage';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -91,6 +92,7 @@ function App() {
           <Route path="/subjects" element={<ProtectedRoute><SubjectSelectionPage /></ProtectedRoute>} />
           <Route path="/subjects/:subjectId/topics" element={<ProtectedRoute><TopicSelectionPage /></ProtectedRoute>} />
           <Route path="/world" element={<ProtectedRoute><GameWorldPage /></ProtectedRoute>} />
+          <Route path="/topics/:topicId/lesson" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
           <Route path="/topics/:topicId/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
           <Route path="/attempts/:attemptId/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><AdminRoute><AdminDashboardPage /></AdminRoute></ProtectedRoute>} />

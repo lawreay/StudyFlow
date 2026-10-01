@@ -120,7 +120,7 @@ export default function GameWorldPage() {
                       )}
                       {node.status === 'available' && hasLearningActivity && (
                         <div className="world-node-actions">
-                          <Link className="secondary-button" to={`/topics/${node.topic_id}/quiz`}>Start quiz</Link>
+                          <Link className="secondary-button" to={`/topics/${node.topic_id}/lesson`}>Start lesson</Link>
                           <button type="button" onClick={() => completeNode(node)} disabled={isCompleting}>
                             {isCompleting ? 'Checking…' : `Claim +${node.reward_xp} XP`}
                           </button>

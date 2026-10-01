@@ -15,7 +15,20 @@ class Topic extends Model
         'subject_id',
         'name',
         'description',
+        'lesson_title',
+        'lesson_summary',
+        'lesson_content',
     ];
+
+    protected function casts(): array
+    {
+        return ['lesson_content' => 'array'];
+    }
+
+    public function hasLesson(): bool
+    {
+        return $this->lesson_title !== null && $this->lesson_summary !== null && ! empty($this->lesson_content);
+    }
 
     public function subject(): BelongsTo
     {

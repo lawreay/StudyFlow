@@ -1,16 +1,15 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AttemptController;
-use App\Http\Controllers\AdminQuestionController;
 use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\ProgressController;
-use App\Http\Controllers\QuestionController;
-use App\Http\Controllers\SubjectController;
-use App\Http\Controllers\StudentDashboardController;
-use App\Http\Controllers\GameWorldController;
+use App\Http\Controllers\AdminQuestionController;
+use App\Http\Controllers\AttemptController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameProgressController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\GameWorldController;
+use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\StudentDashboardController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\TopicLessonController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', function () {
@@ -30,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/subjects', [SubjectController::class, 'index']);
     Route::get('/subjects/{subject}', [SubjectController::class, 'show']);
+    Route::get('/topics/{topic}/lesson', [TopicLessonController::class, 'show']);
+    Route::post('/topics/{topic}/lesson/complete', [TopicLessonController::class, 'complete']);
 
     Route::post('/attempts', [AttemptController::class, 'store']);
     Route::get('/attempts/{attempt}', [AttemptController::class, 'show']);

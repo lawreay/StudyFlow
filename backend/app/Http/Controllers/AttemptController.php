@@ -9,6 +9,7 @@ use App\Models\PlayerProgress;
 use App\Models\Question;
 use App\Models\QuestionOption;
 use App\Models\Topic;
+use App\Models\TopicLessonCompletion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -34,6 +35,14 @@ class AttemptController extends ApiController
         }
 
         $topic = Topic::with('questions.options')->findOrFail($validated['topic_id']);
+
+        if ($topic->hasLesson() && ! TopicLessonCompletion::where('user_id', $request->user()->id)
+            ->where('topic_id', $topic->id)
+            ->exists()) {
+            throw ValidationException::withMessages([
+                'lesson' => ['Complete this topic’s lesson before starting its quiz.'],
+            ]);
+        }
 
         if ($topic->questions->isEmpty()) {
             throw ValidationException::withMessages([
