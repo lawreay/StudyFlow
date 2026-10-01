@@ -18,7 +18,7 @@ class GameProgressService
     /** @return Collection<int, GameWorld> */
     public function worldsFor(User $user): Collection
     {
-        $worlds = GameWorld::where('is_active', true)->with('nodes')->get();
+        $worlds = GameWorld::where('is_active', true)->with('nodes.topic')->get();
         $nodeIds = $worlds->flatMap(fn (GameWorld $world) => $world->nodes->pluck('id'));
         $completed = PlayerNodeProgress::where('user_id', $user->id)
             ->whereIn('game_node_id', $nodeIds)
@@ -54,7 +54,7 @@ class GameProgressService
     public function completeNode(User $user, int $nodeId): array
     {
         return DB::transaction(function () use ($user, $nodeId): array {
-            $node = GameNode::with('world')->lockForUpdate()->findOrFail($nodeId);
+            $node = GameNode::with(['world', 'topic'])->lockForUpdate()->findOrFail($nodeId);
 
             $unlockError = $this->nodeUnlockError($user, $node);
 
@@ -95,6 +95,7 @@ class GameProgressService
             $playerProgress->awardXp($node->reward_xp);
 
             $nextAvailableNode = GameNode::where('world_id', $node->world_id)
+                ->with('topic')
                 ->where('position', '>', $node->position)
                 ->orderBy('position')
                 ->get()

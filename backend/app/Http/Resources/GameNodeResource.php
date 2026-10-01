@@ -15,6 +15,10 @@ class GameNodeResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'topic_id' => $this->topic_id,
+            'topic' => $this->whenLoaded('topic', fn () => $this->topic ? [
+                'id' => $this->topic->id,
+                'name' => $this->topic->name,
+            ] : null),
             'order' => $this->position,
             'required_xp' => $this->unlock_xp,
             'reward_xp' => $this->reward_xp,
@@ -22,6 +26,7 @@ class GameNodeResource extends JsonResource
             'is_start_node' => $this->is_start_node,
             'is_unlocked' => (bool) $this->is_unlocked,
             'is_completed' => (bool) $this->is_completed,
+            'status' => $this->is_completed ? 'completed' : ($this->is_unlocked ? 'available' : 'locked'),
             'completed_at' => $this->completed_at,
         ];
     }
