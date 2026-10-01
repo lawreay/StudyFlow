@@ -5,7 +5,7 @@ import QuestionNavigator from '../components/QuestionNavigator';
 import QuestionCard from '../components/QuestionCard';
 import Timer from '../components/Timer';
 import { api } from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 function getSavedAnswer(attempt, questionId) {
   return attempt?.answers?.find((answer) => answer.question_id === questionId) || null;

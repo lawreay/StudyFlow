@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 
 const csvTemplate = 'question_text,difficulty,points,option_a,option_b,option_c,option_d,correct_option\n"What does CPU stand for?",Easy,2,"Central Processing Unit",Other,Another,No,b\n';
 

@@ -1,5 +1,5 @@
 import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
-import { useAuth } from './context/AuthContext';
+import { useAuth } from './context/useAuth';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import HomePage from './pages/HomePage';

@@ -1,6 +1,5 @@
-import { createContext, useContext, useMemo, useState } from 'react';
-
-const AuthContext = createContext(null);
+import { useMemo, useState } from 'react';
+import { AuthContext } from './AuthContext.js';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('studyflow_user') || 'null'));
@@ -23,14 +22,4 @@ export function AuthProvider({ children }) {
   const value = useMemo(() => ({ user, token, login, logout }), [user, token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-
-  return context;
 }
