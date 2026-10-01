@@ -141,21 +141,9 @@ The first release must include:
 
 ## First Game World
 
-Networking Packet Journey:
+Network Adventure: "Become a Network Engineer."
 
-Player controls a packet travelling through a network.
-
-Correct answers:
-
-- Move packet forward
-- Earn XP
-- Continue mission
-
-Wrong answers:
-
-- Show explanation
-- Reduce progress
-- Allow retry
+The learner progresses through a static network map with Computer, Switch, Router, Internet, and Server nodes. Challenges and packet movement are introduced only after the static world and server-side unlock rules are verified.
 
 ## Results
 
@@ -256,6 +244,21 @@ Priority:
 2. Reliability
 3. Performance
 4. Visual polish
+
+## Phase 4: StudyFlow Game Engine
+
+Build the Network Adventure in small milestones:
+
+1. Phase 4.1: static world and node map, world/nodes API, server-calculated locked/unlocked state, and node selection. No animations or physics.
+2. Phase 4.2: connect nodes to existing questions and attempts; Laravel validates completion and awards rewards.
+3. Phase 4.3: purposeful React movement and effects after the learning/game state is correct.
+
+Authority rules:
+
+- Laravel is the source of truth for XP, node unlocks, mission completion, and rewards.
+- React may render a requested action but must never submit client-calculated XP, unlock status, or completion as trusted state.
+- Reuse `player_progress` for user-level XP/level/accuracy. Store per-node completion separately; do not overload the existing table.
+- Keep the first world specific to networking. Do not add a generic game engine, achievements, multiplayer, AI tutor, or physics in Phase 4.1.
 
 ---
 
