@@ -9,6 +9,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\GameWorldController;
+use App\Http\Controllers\GameProgressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard', StudentDashboardController::class);
 
     Route::get('/game/worlds', [GameWorldController::class, 'index']);
+    Route::get('/game/progress', GameProgressController::class);
     Route::post('/game/nodes/{node}/complete', [GameWorldController::class, 'completeNode']);
 
     Route::prefix('admin')->middleware('admin')->group(function () {
