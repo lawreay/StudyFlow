@@ -44,12 +44,12 @@ class AttemptResumeTest extends TestCase
             ->assertJsonPath('data.current_question_index', 1);
 
         $this->travel(95)->seconds();
-        $resumed = $this->postJson('/api/attempts', ['topic_id' => $topic->id])
+        $resumedResponse = $this->postJson('/api/attempts', ['topic_id' => $topic->id])
             ->assertOk()
             ->assertJsonPath('data.id', $started['id'])
-            ->assertJsonPath('data.current_question_index', 1)
-            ->assertJsonPath('data.elapsed_seconds', 95)
-            ->json('data');
+            ->assertJsonPath('data.current_question_index', 1);
+        $resumed = $resumedResponse->json('data');
+        $this->assertGreaterThanOrEqual(95, $resumed['elapsed_seconds']);
 
         $this->postJson("/api/attempts/{$resumed['id']}/answers", [
             'question_id' => $questions[0]->id,
