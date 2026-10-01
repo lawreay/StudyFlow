@@ -13,6 +13,8 @@ import QuestionListPage from './pages/QuestionListPage';
 import QuestionFormPage from './pages/QuestionFormPage';
 import QuestionImportPage from './pages/QuestionImportPage';
 import TopicSelectionPage from './pages/TopicSelectionPage';
+import GameWorldPage from './pages/GameWorldPage';
+import LearningCompanion from './components/LearningCompanion';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -50,6 +52,7 @@ function App() {
             <>
               <NavLink to="/dashboard">Dashboard</NavLink>
               <NavLink to="/subjects">Study</NavLink>
+              <NavLink to="/world">Adventure</NavLink>
               {user?.is_admin && <NavLink to="/admin">Admin</NavLink>}
             </>
           ) : (
@@ -87,6 +90,7 @@ function App() {
 
           <Route path="/subjects" element={<ProtectedRoute><SubjectSelectionPage /></ProtectedRoute>} />
           <Route path="/subjects/:subjectId/topics" element={<ProtectedRoute><TopicSelectionPage /></ProtectedRoute>} />
+          <Route path="/world" element={<ProtectedRoute><GameWorldPage /></ProtectedRoute>} />
           <Route path="/topics/:topicId/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
           <Route path="/attempts/:attemptId/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><AdminRoute><AdminDashboardPage /></AdminRoute></ProtectedRoute>} />
@@ -98,6 +102,7 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
+      {token && !user?.is_admin && <LearningCompanion />}
     </div>
   );
 }

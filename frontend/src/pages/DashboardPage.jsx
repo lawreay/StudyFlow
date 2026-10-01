@@ -36,6 +36,8 @@ export default function DashboardPage() {
 
   const progress = dashboard?.progress;
   const activeAttempt = dashboard?.active_attempt;
+  const game = dashboard?.game;
+  const nextMission = game?.next_nodes?.[0];
 
   return (
     <div className="learning-page dashboard-page">
@@ -57,6 +59,20 @@ export default function DashboardPage() {
             <span>{progress.completed_questions} questions answered</span>
             <span>{progress.accuracy}% accuracy</span>
           </div>
+          {game?.current_world && (
+            <section className="adventure-summary">
+              <div className="adventure-summary-copy">
+                <p className="eyebrow">Your adventure</p>
+                <h2>{game.current_world.name}</h2>
+                <p>{game.completed_nodes} of {game.total_nodes} missions completed</p>
+                <div className="world-progress-track" aria-label={`${game.completion_percentage}% of world complete`}>
+                  <span style={{ width: `${game.completion_percentage}%` }} />
+                </div>
+                {nextMission && <small>Next mission: <strong>{nextMission.name}</strong> · +{nextMission.reward_xp} XP</small>}
+              </div>
+              <Link to="/world" className="primary-button">View adventure</Link>
+            </section>
+          )}
           {activeAttempt ? (
             <section className="dashboard-next-step">
               <div>

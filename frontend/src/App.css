@@ -319,6 +319,179 @@ input {
   color: #64748b;
 }
 
+.adventure-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+}
+
+.adventure-summary h2,
+.world-card-heading h2 {
+  margin-bottom: 0.35rem;
+}
+
+.adventure-summary p:last-of-type,
+.world-card-heading p:last-child {
+  margin-bottom: 0.75rem;
+  color: #475569;
+}
+
+.world-progress-track {
+  height: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dbeafe;
+}
+
+.world-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2563eb, #22c55e);
+}
+
+.adventure-summary small {
+  display: block;
+  margin-top: 0.65rem;
+  color: #475569;
+}
+
+.world-page .success-banner,
+.world-page .error-banner {
+  margin-bottom: 1.25rem;
+}
+
+.world-card {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: clamp(1.1rem, 4vw, 2rem);
+}
+
+.world-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.world-card-heading > strong {
+  color: #1d4ed8;
+  font-size: 1.3rem;
+}
+
+.world-map {
+  display: grid;
+  gap: 0;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.world-node {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+}
+
+.world-node:not(:last-child)::before {
+  position: absolute;
+  top: 3rem;
+  bottom: 0;
+  left: 1.7rem;
+  width: 2px;
+  background: #cbd5e1;
+  content: '';
+}
+
+.world-node-marker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  border: 2px solid #94a3b8;
+  border-radius: 50%;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 1.35rem;
+}
+
+.world-node.is-completed .world-node-marker {
+  border-color: #16a34a;
+  background: #16a34a;
+  color: white;
+}
+
+.world-node.is-available .world-node-marker {
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: 0 0 0 5px #dbeafe;
+}
+
+.world-node-card {
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.9rem;
+  background: white;
+}
+
+.world-node.is-locked .world-node-card {
+  background: #f8fafc;
+  opacity: 0.72;
+}
+
+.world-node-heading,
+.world-node-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.node-order,
+.world-node-card small {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.world-node-card h3 {
+  margin: 0.18rem 0 0;
+  font-size: 1.1rem;
+}
+
+.world-node-card > p {
+  margin: 0.65rem 0;
+  color: #475569;
+}
+
+.node-status {
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status-completed { background: #dcfce7; color: #166534; }
+.status-available { background: #dbeafe; color: #1d4ed8; }
+.status-locked { background: #e2e8f0; color: #475569; }
+
+.world-node-actions {
+  justify-content: flex-start;
+  margin-top: 0.85rem;
+}
+
+.world-node-actions .secondary-button {
+  border: 1px solid #bfdbfe;
+  background: white;
+}
+
 .quiz-progress {
   margin-bottom: 1.5rem;
 }
@@ -822,6 +995,144 @@ input {
   color: #166534;
 }
 
+.learning-companion,
+.companion-launcher {
+  position: fixed;
+  z-index: 20;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.learning-companion {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.7rem;
+  max-width: min(22rem, calc(100vw - 2rem));
+  animation: companion-drift 6s ease-in-out infinite;
+}
+
+.companion-message {
+  position: relative;
+  padding: 0.8rem 2rem 0.8rem 0.9rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 1rem 1rem 0.25rem 1rem;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 30px rgba(30, 64, 175, 0.16);
+  color: #1e3a8a;
+}
+
+.companion-message strong {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.companion-message p {
+  margin: 0.2rem 0 0;
+  color: #334155;
+  font-size: 0.85rem;
+}
+
+.companion-dismiss {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #475569;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.companion-bot {
+  display: grid;
+  justify-items: center;
+  width: 3.9rem;
+  filter: drop-shadow(0 8px 8px rgba(30, 64, 175, 0.2));
+}
+
+.companion-antenna {
+  display: block;
+  width: 0.18rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #2563eb;
+}
+
+.companion-antenna::before {
+  display: block;
+  width: 0.45rem;
+  height: 0.45rem;
+  margin: -0.2rem 0 0 -0.14rem;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0.2rem #dcfce7;
+  content: '';
+}
+
+.companion-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  width: 3.9rem;
+  height: 2.7rem;
+  border: 3px solid #1d4ed8;
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, #eff6ff, #bfdbfe);
+}
+
+.companion-head i {
+  display: block;
+  width: 0.43rem;
+  height: 0.43rem;
+  border-radius: 50%;
+  background: #1d4ed8;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.65);
+}
+
+.companion-body {
+  display: block;
+  width: 2.8rem;
+  height: 1.15rem;
+  margin-top: 0.12rem;
+  border-radius: 0.8rem 0.8rem 0.3rem 0.3rem;
+  background: linear-gradient(135deg, #2563eb, #22c55e);
+}
+
+.companion-launcher {
+  display: grid;
+  width: 3.4rem;
+  height: 3.4rem;
+  place-items: center;
+  border: 3px solid #1d4ed8;
+  border-radius: 50%;
+  background: #eff6ff;
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+  animation: companion-drift 6s ease-in-out infinite;
+}
+
+.companion-mini-bot {
+  color: #1d4ed8;
+  font-size: 1.5rem;
+}
+
+@keyframes companion-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-0.4rem, -0.75rem, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learning-companion,
+  .companion-launcher {
+    animation: none;
+  }
+}
+
 @media (max-width: 700px) {
   .dashboard-stats,
   .score-grid {
@@ -829,7 +1140,13 @@ input {
   }
 
   .dashboard-next-step,
-  .quiz-actions {
+  .quiz-actions,
+  .adventure-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .world-node-heading {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -869,6 +1186,21 @@ input {
 
   .correct-radio {
     grid-column: 1 / -1;
+  }
+
+  .learning-companion {
+    align-items: flex-end;
+    gap: 0.35rem;
+  }
+
+  .companion-message {
+    max-width: 15rem;
+  }
+
+  .companion-bot {
+    width: 3.2rem;
+    transform: scale(0.82);
+    transform-origin: bottom right;
   }
 }
 

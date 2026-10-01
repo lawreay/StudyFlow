@@ -83,6 +83,7 @@ export default function ResultsPage() {
       </section>
       <div className="results-actions">
         <Link className="secondary-button" to="/dashboard">Dashboard</Link>
+        <Link className="secondary-button" to="/world">Continue adventure</Link>
         <Link className="primary-button" to="/subjects">Study another topic</Link>
       </div>
     </div>
