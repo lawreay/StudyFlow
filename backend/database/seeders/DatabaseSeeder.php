@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SubjectSeeder::class,
             QuestionSeeder::class,
+            GameWorldSeeder::class,
+            GameNodeSeeder::class,
         ]);
     }
 }
