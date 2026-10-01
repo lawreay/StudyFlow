@@ -129,12 +129,7 @@ class AttemptController extends ApiController
             $totalCorrect = (clone $userAnswers)->where('is_correct', true)->count();
             $progress->completed_questions = $totalAnswered;
             $progress->xp = $totalCorrect * 10;
-            $progress->level = match (true) {
-                $progress->xp >= 500 => 4,
-                $progress->xp >= 250 => 3,
-                $progress->xp >= 100 => 2,
-                default => 1,
-            };
+            $progress->updateLevelFromXp();
             $progress->accuracy = round(($totalCorrect / $totalAnswered) * 100, 2);
             $progress->score = AttemptAnswer::whereHas('attempt', fn ($query) => $query->where('user_id', $request->user()->id))
                 ->sum('marks_earned');
