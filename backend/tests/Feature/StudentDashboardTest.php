@@ -40,7 +40,10 @@ class StudentDashboardTest extends TestCase
         $activeDashboard = $this->getJson('/api/dashboard')
             ->assertOk()
             ->assertJsonPath('data.completed_quizzes', 0)
-            ->assertJsonPath('data.active_attempt.id', $attempt['id']);
+            ->assertJsonPath('data.active_attempt.id', $attempt['id'])
+            ->assertJsonPath('data.active_attempt.topic_id', $topic->id)
+            ->assertJsonMissingPath('data.active_attempt.questions')
+            ->assertJsonMissingPath('data.active_attempt.answers');
 
         $this->postJson("/api/attempts/{$attempt['id']}/complete")
             ->assertUnprocessable()
