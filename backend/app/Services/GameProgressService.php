@@ -7,6 +7,7 @@ use App\Models\GameWorld;
 use App\Models\Attempt;
 use App\Models\PlayerNodeProgress;
 use App\Models\PlayerProgress;
+use App\Models\RewardEvent;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -80,6 +81,14 @@ class GameProgressService
             ]);
             $nodeProgress->completed_at = now();
             $nodeProgress->save();
+
+            RewardEvent::create([
+                'user_id' => $user->id,
+                'type' => 'node_completion',
+                'reference_type' => 'game_node',
+                'reference_id' => $node->id,
+                'xp_amount' => $node->reward_xp,
+            ]);
 
             $playerProgress = PlayerProgress::where('user_id', $user->id)->lockForUpdate()->first();
             $playerProgress ??= new PlayerProgress(['user_id' => $user->id]);
