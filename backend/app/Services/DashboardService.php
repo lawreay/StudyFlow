@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Resources\AttemptResource;
 use App\Models\Attempt;
 use App\Models\PlayerProgress;
 use App\Models\RewardEvent;
@@ -53,7 +52,7 @@ class DashboardService
         ];
         $activeAttempt = Attempt::where('user_id', $user->id)
             ->whereNull('completed_at')
-            ->with(['questions.options', 'questions.topic', 'answers.question', 'answers.selectedOption'])
+            ->with('topic')
             ->latest('id')
             ->first();
         $gameSummary = $this->gameProgressSummaryService->forUser($user);
@@ -98,7 +97,18 @@ class DashboardService
             'progress' => $progress,
             'completed_quizzes' => $completedAttempts->count(),
             'average_score_percent' => $averageScore,
-            'active_attempt' => $activeAttempt ? (new AttemptResource($activeAttempt))->resolve() : null,
+            'active_attempt' => $activeAttempt ? [
+                'id' => $activeAttempt->id,
+                'topic_id' => $activeAttempt->topic_id,
+                'topic_name' => $activeAttempt->topic?->name ?? 'Topic removed',
+                'current_question_index' => $activeAttempt->current_question_index,
+                'total_questions' => $activeAttempt->total_questions,
+                'answered_questions' => $activeAttempt->answers()->count(),
+                'elapsed_seconds' => max(
+                    (int) $activeAttempt->duration_seconds,
+                    (int) ($activeAttempt->started_at?->diffInSeconds(now()) ?? 0),
+                ),
+            ] : null,
             'recent_activity' => $recentAttempts,
         ];
     }
