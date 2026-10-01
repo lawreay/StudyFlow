@@ -70,13 +70,13 @@ class GameProgressionTest extends TestCase
     {
         $user = User::factory()->create();
         [, $second] = $this->createWorldNodes();
-        PlayerProgress::create(['user_id' => $user->id, 'xp' => 0, 'level' => 1]);
+        PlayerProgress::create(['user_id' => $user->id, 'xp' => 10, 'level' => 1]);
 
         try {
             app(GameProgressService::class)->completeNode($user, $second->id);
             $this->fail('A locked node should not be completable.');
         } catch (ValidationException) {
-            $this->assertSame(0, PlayerProgress::where('user_id', $user->id)->value('xp'));
+            $this->assertSame(10, PlayerProgress::where('user_id', $user->id)->value('xp'));
             $this->assertDatabaseMissing('player_node_progress', [
                 'user_id' => $user->id,
                 'game_node_id' => $second->id,
@@ -108,23 +108,29 @@ class GameProgressionTest extends TestCase
     {
         $user = User::factory()->create();
         [$first, $second] = $this->createWorldNodes();
+        PlayerProgress::create(['user_id' => $user->id, 'xp' => 10, 'level' => 1]);
 
         $this->postJson("/api/game/nodes/{$first->id}/complete")
             ->assertUnauthorized();
 
         $this->actingAs($user, 'sanctum')
             ->postJson("/api/game/nodes/{$second->id}/complete")
-            ->assertUnprocessable();
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.prerequisite_node.0', 'Complete the previous node before continuing.');
 
-        $this->postJson("/api/game/nodes/{$first->id}/complete")
+        $this->postJson("/api/game/nodes/{$first->id}/complete", [
+            'score' => 999,
+            'xp' => 9999,
+            'completed' => true,
+        ])
             ->assertOk()
             ->assertJsonPath('data.node.is_completed', true)
-            ->assertJsonPath('data.progress.xp', 15);
+            ->assertJsonPath('data.progress.xp', 25);
 
         $this->postJson("/api/game/nodes/{$first->id}/complete")
             ->assertUnprocessable();
 
-        $this->assertSame(15, PlayerProgress::where('user_id', $user->id)->value('xp'));
+        $this->assertSame(25, PlayerProgress::where('user_id', $user->id)->value('xp'));
     }
 
     public function test_linked_node_requires_completed_topic_attempt_and_required_score(): void

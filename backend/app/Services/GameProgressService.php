@@ -46,41 +46,19 @@ class GameProgressService
 
     public function isNodeUnlocked(User $user, GameNode $node): bool
     {
-        if (! $node->world()->where('is_active', true)->exists()) {
-            return false;
-        }
-
-        $xp = (int) (PlayerProgress::where('user_id', $user->id)->value('xp') ?? 0);
-
-        if ($xp < $node->unlock_xp) {
-            return false;
-        }
-
-        if ($node->is_start_node) {
-            return true;
-        }
-
-        $previousNode = GameNode::where('world_id', $node->world_id)
-            ->where('position', '<', $node->position)
-            ->orderByDesc('position')
-            ->first();
-
-        return $previousNode !== null && PlayerNodeProgress::where('user_id', $user->id)
-            ->where('game_node_id', $previousNode->id)
-            ->whereNotNull('completed_at')
-            ->exists();
+        return $this->nodeUnlockError($user, $node) === null;
     }
 
-    /** @return array{node: GameNode, node_progress: PlayerNodeProgress, player_progress: PlayerProgress} */
+    /** @return array{node: GameNode, node_progress: PlayerNodeProgress, player_progress: PlayerProgress, next_available_node: ?GameNode} */
     public function completeNode(User $user, int $nodeId): array
     {
         return DB::transaction(function () use ($user, $nodeId): array {
             $node = GameNode::with('world')->lockForUpdate()->findOrFail($nodeId);
 
-            if (! $this->isNodeUnlocked($user, $node)) {
-                throw ValidationException::withMessages([
-                    'node' => ['This node is locked or its world is unavailable.'],
-                ]);
+            $unlockError = $this->nodeUnlockError($user, $node);
+
+            if ($unlockError !== null) {
+                throw ValidationException::withMessages($unlockError);
             }
 
             $this->validateLearningRequirement($user, $node);
@@ -136,6 +114,7 @@ class GameProgressService
             ->where('topic_id', $node->topic_id)
             ->whereNotNull('completed_at')
             ->latest('completed_at')
+            ->latest('id')
             ->first();
 
         if ($attempt === null) {
@@ -149,5 +128,36 @@ class GameProgressService
                 'required_score' => ['The completed topic quiz did not meet the required score.'],
             ]);
         }
+    }
+
+    private function nodeUnlockError(User $user, GameNode $node): ?array
+    {
+        if (! $node->world()->where('is_active', true)->exists()) {
+            return ['world' => ['This game world is unavailable.']];
+        }
+
+        $xp = (int) (PlayerProgress::where('user_id', $user->id)->value('xp') ?? 0);
+
+        if ($xp < $node->unlock_xp) {
+            return ['required_xp' => ['Earn more XP to unlock this node.']];
+        }
+
+        if ($node->is_start_node) {
+            return null;
+        }
+
+        $previousNode = GameNode::where('world_id', $node->world_id)
+            ->where('position', '<', $node->position)
+            ->orderByDesc('position')
+            ->first();
+
+        if ($previousNode === null || ! PlayerNodeProgress::where('user_id', $user->id)
+            ->where('game_node_id', $previousNode->id)
+            ->whereNotNull('completed_at')
+            ->exists()) {
+            return ['prerequisite_node' => ['Complete the previous node before continuing.']];
+        }
+
+        return null;
     }
 }
