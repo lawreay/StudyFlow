@@ -4,8 +4,11 @@ namespace Tests\Feature;
 
 use App\Models\GameNode;
 use App\Models\GameWorld;
+use App\Models\Question;
 use App\Models\PlayerNodeProgress;
 use App\Models\PlayerProgress;
+use App\Models\Subject;
+use App\Models\Topic;
 use App\Models\User;
 use App\Services\GameProgressService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -124,7 +127,79 @@ class GameProgressionTest extends TestCase
         $this->assertSame(15, PlayerProgress::where('user_id', $user->id)->value('xp'));
     }
 
-    private function createWorldNodes(): array
+    public function test_linked_node_requires_completed_topic_attempt_and_required_score(): void
+    {
+        $user = User::factory()->create();
+        $subject = Subject::create(['name' => 'Networking']);
+        $topic = Topic::create(['subject_id' => $subject->id, 'name' => 'Network Devices']);
+        $questions = collect([1, 2])->map(function () use ($subject, $topic): Question {
+            $question = Question::create([
+                'subject_id' => $subject->id,
+                'topic_id' => $topic->id,
+                'question_text' => 'Which device routes between networks?',
+                'points' => 1,
+            ]);
+            $question->options()->createMany([
+                ['option_text' => 'Router', 'is_correct' => true],
+                ['option_text' => 'Switch', 'is_correct' => false],
+            ]);
+
+            return $question->load('options');
+        });
+        [$first] = $this->createWorldNodes($topic->id, 2);
+        $this->actingAs($user, 'sanctum');
+
+        $this->postJson("/api/game/nodes/{$first->id}/complete")
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.learning_activity.0', 'Complete the linked topic quiz before completing this node.');
+
+        $lowScoreAttempt = $this->postJson('/api/attempts', ['topic_id' => $topic->id])
+            ->assertCreated()
+            ->json('data');
+        $this->postJson("/api/attempts/{$lowScoreAttempt['id']}/answers", [
+            'question_id' => $questions[0]->id,
+            'selected_option_id' => $questions[0]->options[0]->id,
+        ])->assertOk();
+        $this->postJson("/api/attempts/{$lowScoreAttempt['id']}/answers", [
+            'question_id' => $questions[1]->id,
+            'selected_option_id' => $questions[1]->options[1]->id,
+        ])->assertOk();
+        $this->postJson("/api/attempts/{$lowScoreAttempt['id']}/complete")
+            ->assertOk()
+            ->assertJsonPath('data.attempt.score', 1);
+
+        $this->postJson("/api/game/nodes/{$first->id}/complete")
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.required_score.0', 'The completed topic quiz did not meet the required score.');
+
+        $qualifyingAttempt = $this->postJson('/api/attempts', ['topic_id' => $topic->id])
+            ->assertCreated()
+            ->json('data');
+        foreach ($questions as $question) {
+            $this->postJson("/api/attempts/{$qualifyingAttempt['id']}/answers", [
+                'question_id' => $question->id,
+                'selected_option_id' => $question->options[0]->id,
+            ])->assertOk();
+        }
+        $this->postJson("/api/attempts/{$qualifyingAttempt['id']}/complete")
+            ->assertOk()
+            ->assertJsonPath('data.attempt.score', 2);
+
+        $this->postJson("/api/game/nodes/{$first->id}/complete")
+            ->assertOk()
+            ->assertJsonPath('data.node.is_completed', true)
+            ->assertJsonPath('data.reward_xp', 15)
+            ->assertJsonPath('data.progress.xp', 45)
+            ->assertJsonPath('data.next_available_node.id', $first->id + 1);
+
+        $this->postJson("/api/game/nodes/{$first->id}/complete")
+            ->assertUnprocessable();
+
+        $this->assertSame(45, PlayerProgress::where('user_id', $user->id)->value('xp'));
+        $this->assertSame(1, PlayerNodeProgress::where('user_id', $user->id)->count());
+    }
+
+    private function createWorldNodes(?int $topicId = null, ?int $requiredScore = null): array
     {
         $world = GameWorld::create([
             'slug' => 'test-world',
@@ -133,11 +208,13 @@ class GameProgressionTest extends TestCase
         ]);
         $first = GameNode::create([
             'world_id' => $world->id,
+            'topic_id' => $topicId,
             'slug' => 'first',
             'name' => 'First',
             'position' => 1,
             'unlock_xp' => 0,
             'reward_xp' => 15,
+            'required_score' => $requiredScore,
             'is_start_node' => true,
         ]);
         $second = GameNode::create([
