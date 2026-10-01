@@ -23,12 +23,14 @@ Phase 4.1 supports one static world, Network Adventure, with ordered nodes and s
 
 - `id`: primary key
 - `world_id`: foreign key to `game_worlds`, cascade on world deletion
+- `topic_id`: optional foreign key to existing `topics`; null means this node has no linked quiz requirement
 - `slug`: stable identifier unique within a world
 - `name`: node label
 - `description`: optional learning context
 - `position`: ordered map position, unique within a world
 - `unlock_xp`: minimum server-recorded player XP required to unlock
 - `reward_xp`: XP Laravel grants once when the learner completes this node
+- `required_score`: optional minimum raw marks from a completed attempt for the linked topic
 - `is_start_node`: marks the initial node
 - timestamps
 

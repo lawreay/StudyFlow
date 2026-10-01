@@ -13,12 +13,14 @@ class GameNode extends Model
 
     protected $fillable = [
         'world_id',
+        'topic_id',
         'slug',
         'name',
         'description',
         'position',
         'unlock_xp',
         'reward_xp',
+        'required_score',
         'is_start_node',
     ];
 
@@ -28,6 +30,7 @@ class GameNode extends Model
             'position' => 'integer',
             'unlock_xp' => 'integer',
             'reward_xp' => 'integer',
+            'required_score' => 'integer',
             'is_start_node' => 'boolean',
         ];
     }
@@ -35,6 +38,11 @@ class GameNode extends Model
     public function world(): BelongsTo
     {
         return $this->belongsTo(GameWorld::class, 'world_id');
+    }
+
+    public function topic(): BelongsTo
+    {
+        return $this->belongsTo(Topic::class);
     }
 
     public function playerProgress(): HasMany
