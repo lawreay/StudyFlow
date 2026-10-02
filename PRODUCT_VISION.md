@@ -65,7 +65,7 @@ This is the implementation status, not a future feature list. Check an item only
 - [x] World-completion certificate issuance with unique certificate IDs and public verification.
 - [x] Learner certificate area for claiming and viewing verified certificates.
 - [ ] Downloadable, branded certificate documents.
-- [ ] Learner profile editing.
+- [x] Learner profile page with display-name editing and account identity synced across the portal.
 - [ ] Student reports beyond the current dashboard aggregates.
 - [ ] Offline support, AI mentor features, peer learning, and institution management.
 
