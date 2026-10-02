@@ -57,6 +57,11 @@
   gap: 0.75rem;
 }
 
+.profile-link {
+  color: #f8fafc;
+  font-weight: 600;
+}
+
 .text-button {
   background: none;
   border: none;
@@ -790,6 +795,31 @@ input {
 
 .verification-card > p:not(.eyebrow) {
   color: #475569;
+}
+
+.profile-form {
+  display: grid;
+  gap: 1.1rem;
+  max-width: 34rem;
+}
+
+.profile-form label {
+  display: grid;
+  gap: 0.45rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.profile-form input:disabled {
+  cursor: not-allowed;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.profile-form small {
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 400;
 }
 
 .verification-card dl {

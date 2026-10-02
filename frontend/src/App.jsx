@@ -18,6 +18,7 @@ import LearningCompanion from './components/LearningCompanion';
 import LessonPage from './pages/LessonPage';
 import CertificatesPage from './pages/CertificatesPage';
 import VerifyCertificatePage from './pages/VerifyCertificatePage';
+import ProfilePage from './pages/ProfilePage';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -69,7 +70,7 @@ function App() {
 
         {token && (
           <div className="user-controls">
-            <span>{user?.name || 'Player'}</span>
+            <NavLink to="/profile" className="profile-link">{user?.name || 'Player'}</NavLink>
             <button type="button" onClick={logout} className="text-button">
               Logout
             </button>
@@ -97,6 +98,7 @@ function App() {
           <Route path="/subjects/:subjectId/topics" element={<ProtectedRoute><TopicSelectionPage /></ProtectedRoute>} />
           <Route path="/world" element={<ProtectedRoute><GameWorldPage /></ProtectedRoute>} />
           <Route path="/certificates" element={<ProtectedRoute><CertificatesPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/topics/:topicId/lesson" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
           <Route path="/topics/:topicId/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
           <Route path="/attempts/:attemptId/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />

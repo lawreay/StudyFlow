@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { AuthContext } from './AuthContext.js';
 
 export function AuthProvider({ children }) {
@@ -19,7 +19,12 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('studyflow_token');
   };
 
-  const value = useMemo(() => ({ user, token, login, logout }), [user, token]);
+  const updateUser = useCallback((userData) => {
+    setUser(userData);
+    localStorage.setItem('studyflow_user', JSON.stringify(userData));
+  }, []);
+
+  const value = useMemo(() => ({ user, token, login, logout, updateUser }), [user, token, updateUser]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
