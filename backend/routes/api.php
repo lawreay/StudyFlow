@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminQuestionController;
 use App\Http\Controllers\AttemptController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\GameProgressController;
 use App\Http\Controllers\GameWorldController;
 use App\Http\Controllers\ProgressController;
@@ -22,6 +23,7 @@ Route::get('/health', function () {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/certificates/verify/{certificateNumber}', [CertificateController::class, 'verify']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -40,6 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/attempts/{attempt}/complete', [AttemptController::class, 'complete']);
 
     Route::get('/progress', [ProgressController::class, 'index']);
+    Route::get('/certificates', [CertificateController::class, 'index']);
+    Route::post('/certificates/worlds/{world}', [CertificateController::class, 'issue']);
     Route::get('/dashboard', StudentDashboardController::class);
 
     Route::get('/game/worlds', [GameWorldController::class, 'index']);
