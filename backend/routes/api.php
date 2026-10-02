@@ -28,6 +28,7 @@ Route::get('/certificates/verify/{certificateNumber}', [CertificateController::c
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
+    Route::patch('/me', [AuthController::class, 'updateProfile']);
 
     Route::get('/subjects', [SubjectController::class, 'index']);
     Route::get('/subjects/{subject}', [SubjectController::class, 'show']);

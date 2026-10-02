@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -61,6 +60,19 @@ class AuthController extends ApiController
         return $this->success([
             'user' => $request->user()->only(['id', 'name', 'email', 'is_admin']),
         ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
+        $request->user()->update(['name' => $validated['name']]);
+
+        return $this->success([
+            'user' => $request->user()->fresh()->only(['id', 'name', 'email', 'is_admin']),
+        ], 'Profile updated');
     }
 
     public function logout(Request $request)
