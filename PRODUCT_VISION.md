@@ -62,8 +62,10 @@ This is the implementation status, not a future feature list. Check an item only
 - [ ] Course model and course-management screens (subjects/topics exist, but a complete course-management system does not).
 - [ ] Project-based challenges with learner submissions and review criteria.
 - [ ] Dedicated achievement definitions and achievement badges (reward events are implemented; achievements are not).
-- [ ] Certificate generation, certificate IDs, and public verification.
-- [ ] Learner profile and certificate area.
+- [x] World-completion certificate issuance with unique certificate IDs and public verification.
+- [x] Learner certificate area for claiming and viewing verified certificates.
+- [ ] Downloadable, branded certificate documents.
+- [ ] Learner profile editing.
 - [ ] Student reports beyond the current dashboard aggregates.
 - [ ] Offline support, AI mentor features, peer learning, and institution management.
 
