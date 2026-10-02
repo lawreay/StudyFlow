@@ -78,6 +78,7 @@ class SubjectSeeder extends Seeder
                     'lesson_title' => $topic['lesson_title'],
                     'lesson_summary' => $topic['lesson_summary'],
                     'lesson_content' => $topic['lesson_content'],
+                    'lesson_practice' => $topic['lesson_practice'],
                 ]);
             }
         }
@@ -90,6 +91,89 @@ class SubjectSeeder extends Seeder
             'lesson_title' => $name.': your first mission',
             'lesson_summary' => $summary,
             'lesson_content' => $content,
+            'lesson_practice' => $this->practiceFor($name),
+        ];
+    }
+
+    private function practiceFor(string $topicName): array
+    {
+        return match ($topicName) {
+            'OSI Model' => $this->practice(
+                'A packet needs to be routed between two networks. Which OSI layer handles that job?',
+                ['application' => 'Application', 'network' => 'Network', 'physical' => 'Physical'],
+                'network',
+                'Exactly. The Network layer is responsible for logical addressing and routing.',
+                'Think about which layer decides how a packet moves between networks.',
+            ),
+            'TCP/IP' => $this->practice(
+                'Which protocol is designed to make sure important data arrives reliably?',
+                ['udp' => 'UDP', 'tcp' => 'TCP', 'ip' => 'IP'],
+                'tcp',
+                'Correct. TCP checks delivery and helps recover missing data.',
+                'Look for the protocol that checks whether data arrived safely.',
+            ),
+            'Network Devices' => $this->practice(
+                'Your packet must travel to a different network. Which device should guide it onward?',
+                ['switch' => 'Switch', 'router' => 'Router', 'keyboard' => 'Keyboard'],
+                'router',
+                'Correct. A router forwards traffic between separate networks.',
+                'A switch works inside a local network; you need the device that chooses paths between networks.',
+            ),
+            'Variables' => $this->practice(
+                'Which value makes the most sense for a variable named score?',
+                ['number' => '42', 'text' => 'blue', 'function' => 'A function'],
+                'number',
+                'Correct. Scores are normally numbers so a program can calculate with them.',
+                'Think about the type of value a program needs to add, compare, or update as a score.',
+            ),
+            'Functions' => $this->practice(
+                'What is the best reason to place repeated instructions inside a function?',
+                ['reuse' => 'To reuse the same job without copying code', 'delete' => 'To delete variables', 'style' => 'To change a page colour'],
+                'reuse',
+                'Correct. Functions package a job so it can be used again.',
+                'Think about avoiding copy-and-paste when the same task appears more than once.',
+            ),
+            'Algorithms' => $this->practice(
+                'Which description best matches an algorithm?',
+                ['plan' => 'A clear sequence of steps to solve a problem', 'device' => 'A piece of computer hardware', 'colour' => 'A visual design choice'],
+                'plan',
+                'Correct. An algorithm is a step-by-step plan for a problem.',
+                'Focus on the idea of a repeatable set of instructions.',
+            ),
+            'CPU' => $this->practice(
+                'What is the CPU mainly responsible for?',
+                ['execute' => 'Executing instructions', 'storage' => 'Keeping files forever', 'wifi' => 'Connecting directly to Wi-Fi'],
+                'execute',
+                'Correct. The CPU carries out instructions for programs.',
+                'Think about the computer component that performs calculations and logic.',
+            ),
+            'RAM' => $this->practice(
+                'What happens to information in RAM when a computer loses power?',
+                ['lost' => 'It is lost', 'permanent' => 'It becomes permanent', 'copied' => 'It is copied to storage automatically'],
+                'lost',
+                'Correct. RAM is temporary, volatile working memory.',
+                'RAM is like a desk for current work, not a long-term filing cabinet.',
+            ),
+            'Storage' => $this->practice(
+                'Which component keeps files available after a computer is switched off?',
+                ['ssd' => 'An SSD', 'ram' => 'RAM', 'cache' => 'CPU cache'],
+                'ssd',
+                'Correct. Storage such as an SSD keeps data without power.',
+                'Look for non-volatile, long-term storage.',
+            ),
+        };
+    }
+
+    private function practice(string $question, array $options, string $correctOptionId, string $correctFeedback, string $incorrectFeedback): array
+    {
+        return [
+            'question' => $question,
+            'options' => collect($options)->map(
+                fn (string $label, string $id) => ['id' => $id, 'label' => $label],
+            )->values()->all(),
+            'correct_option_id' => $correctOptionId,
+            'correct_feedback' => $correctFeedback,
+            'incorrect_feedback' => $incorrectFeedback,
         ];
     }
 }

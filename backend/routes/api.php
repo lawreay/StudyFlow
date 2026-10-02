@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/subjects', [SubjectController::class, 'index']);
     Route::get('/subjects/{subject}', [SubjectController::class, 'show']);
     Route::get('/topics/{topic}/lesson', [TopicLessonController::class, 'show']);
+    Route::post('/topics/{topic}/lesson/practice', [TopicLessonController::class, 'checkPractice']);
     Route::post('/topics/{topic}/lesson/complete', [TopicLessonController::class, 'complete']);
 
     Route::post('/attempts', [AttemptController::class, 'store']);

@@ -28,11 +28,23 @@ class TopicLessonTest extends TestCase
             ->assertOk()
             ->assertJsonPath('data.lesson.title', 'Routing: your first mission')
             ->assertJsonPath('data.lesson.sections.0.heading', 'The big idea')
+            ->assertJsonPath('data.lesson.practice.question', 'Which device routes packets?')
+            ->assertJsonMissingPath('data.lesson.practice.correct_option_id')
             ->assertJsonPath('data.lesson.is_completed', false);
 
         $this->postJson('/api/attempts', ['topic_id' => $topic->id])
             ->assertUnprocessable()
             ->assertJsonPath('errors.lesson.0', 'Complete this topic’s lesson before starting its quiz.');
+
+        $this->postJson("/api/topics/{$topic->id}/lesson/complete")
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.practice.0', 'Pass the mission check before completing this lesson.');
+
+        $this->postJson("/api/topics/{$topic->id}/lesson/practice", ['selected_option_id' => 'router'])
+            ->assertOk()
+            ->assertJsonPath('data.is_correct', true)
+            ->assertJsonPath('data.is_practice_completed', true)
+            ->assertJsonMissingPath('data.correct_option_id');
 
         $this->postJson("/api/topics/{$topic->id}/lesson/complete")
             ->assertOk()
@@ -54,12 +66,25 @@ class TopicLessonTest extends TestCase
         [, $topic] = $this->createTopicWithLessonAndQuestion();
 
         $this->actingAs($firstUser, 'sanctum')
-            ->postJson("/api/topics/{$topic->id}/lesson/complete")
+            ->postJson("/api/topics/{$topic->id}/lesson/practice", ['selected_option_id' => 'router'])
+            ->assertOk()
+            ->assertJsonPath('data.is_practice_completed', true);
+
+        $this->postJson("/api/topics/{$topic->id}/lesson/complete")
             ->assertOk()
             ->assertJsonPath('data.lesson.is_completed', true);
 
         $this->actingAs($secondUser, 'sanctum')
-            ->getJson("/api/topics/{$topic->id}/lesson")
+            ->postJson("/api/topics/{$topic->id}/lesson/practice", ['selected_option_id' => 'switch'])
+            ->assertOk()
+            ->assertJsonPath('data.is_correct', false)
+            ->assertJsonPath('data.is_practice_completed', false);
+
+        $this->postJson("/api/topics/{$topic->id}/lesson/complete")
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.practice.0', 'Pass the mission check before completing this lesson.');
+
+        $this->getJson("/api/topics/{$topic->id}/lesson")
             ->assertOk()
             ->assertJsonPath('data.lesson.is_completed', false);
     }
@@ -74,6 +99,16 @@ class TopicLessonTest extends TestCase
             'lesson_summary' => 'Find the right path for a packet.',
             'lesson_content' => [
                 ['heading' => 'The big idea', 'body' => 'Routers send traffic between networks.'],
+            ],
+            'lesson_practice' => [
+                'question' => 'Which device routes packets?',
+                'options' => [
+                    ['id' => 'router', 'label' => 'Router'],
+                    ['id' => 'switch', 'label' => 'Switch'],
+                ],
+                'correct_option_id' => 'router',
+                'correct_feedback' => 'Correct. Routers send packets between networks.',
+                'incorrect_feedback' => 'Try again. Switches connect devices inside a network.',
             ],
         ]);
         $question = Question::create([
