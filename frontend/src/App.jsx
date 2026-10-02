@@ -16,6 +16,8 @@ import TopicSelectionPage from './pages/TopicSelectionPage';
 import GameWorldPage from './pages/GameWorldPage';
 import LearningCompanion from './components/LearningCompanion';
 import LessonPage from './pages/LessonPage';
+import CertificatesPage from './pages/CertificatesPage';
+import VerifyCertificatePage from './pages/VerifyCertificatePage';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -54,6 +56,7 @@ function App() {
               <NavLink to="/dashboard">Dashboard</NavLink>
               <NavLink to="/subjects">Study</NavLink>
               <NavLink to="/world">Adventure</NavLink>
+              <NavLink to="/certificates">Certificates</NavLink>
               {user?.is_admin && <NavLink to="/admin">Admin</NavLink>}
             </>
           ) : (
@@ -79,6 +82,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify/:certificateNumber" element={<VerifyCertificatePage />} />
 
           <Route
             path="/dashboard"
@@ -92,6 +96,7 @@ function App() {
           <Route path="/subjects" element={<ProtectedRoute><SubjectSelectionPage /></ProtectedRoute>} />
           <Route path="/subjects/:subjectId/topics" element={<ProtectedRoute><TopicSelectionPage /></ProtectedRoute>} />
           <Route path="/world" element={<ProtectedRoute><GameWorldPage /></ProtectedRoute>} />
+          <Route path="/certificates" element={<ProtectedRoute><CertificatesPage /></ProtectedRoute>} />
           <Route path="/topics/:topicId/lesson" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
           <Route path="/topics/:topicId/quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
           <Route path="/attempts/:attemptId/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
