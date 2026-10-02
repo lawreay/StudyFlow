@@ -566,6 +566,82 @@ input {
   color: #475569;
 }
 
+.lesson-practice {
+  margin-top: 1.5rem;
+  border-color: #bfdbfe;
+  background: #f8fbff;
+}
+
+.lesson-practice-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.lesson-practice-heading h2 {
+  margin-bottom: 0;
+  font-size: 1.15rem;
+}
+
+.lesson-practice-question {
+  margin: 1rem 0;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.lesson-practice-options {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.lesson-practice-option {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.7rem;
+  background: white;
+  color: #334155;
+  cursor: pointer;
+}
+
+.lesson-practice-option input {
+  width: auto;
+  accent-color: #2563eb;
+}
+
+.lesson-practice-option.is-selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.lesson-practice-feedback {
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid #64748b;
+  background: white;
+}
+
+.lesson-practice-feedback p {
+  margin: 0.3rem 0 0;
+}
+
+.lesson-practice-feedback.is-correct {
+  border-color: #16a34a;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.lesson-practice-feedback.is-wrong {
+  border-color: #d97706;
+  background: #fffbeb;
+  color: #92400e;
+}
+
 .lesson-next-step {
   display: flex;
   align-items: center;

@@ -57,7 +57,8 @@ This is the implementation status, not a future feature list. Check an item only
 ### Next to build
 
 - [x] Short, structured lesson content before a topic quiz, with learner completion stored server-side and quiz entry gated until the lesson is complete.
-- [ ] Practice exercises beyond the lesson and quiz flow.
+- [x] One server-validated mission check within each seeded lesson, with immediate feedback before quiz unlock.
+- [ ] Additional practice exercises beyond the lesson mission check and quiz flow.
 - [ ] Course model and course-management screens (subjects/topics exist, but a complete course-management system does not).
 - [ ] Project-based challenges with learner submissions and review criteria.
 - [ ] Dedicated achievement definitions and achievement badges (reward events are implemented; achievements are not).
