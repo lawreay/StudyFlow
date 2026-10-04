@@ -6,12 +6,11 @@ use App\Models\Attempt;
 use App\Models\PlayerProgress;
 use App\Models\RewardEvent;
 use App\Models\User;
+use App\Models\UserAchievement;
 
 class DashboardService
 {
-    public function __construct(private readonly GameProgressSummaryService $gameProgressSummaryService)
-    {
-    }
+    public function __construct(private readonly GameProgressSummaryService $gameProgressSummaryService) {}
 
     public function forUser(User $user): array
     {
@@ -70,6 +69,17 @@ class DashboardService
                 'xp_amount' => $event->xp_amount,
                 'created_at' => $event->created_at,
             ])->all();
+        $achievements = UserAchievement::where('user_id', $user->id)
+            ->with('achievement')
+            ->latest('earned_at')
+            ->get()
+            ->map(fn (UserAchievement $userAchievement): array => [
+                'id' => $userAchievement->achievement->id,
+                'name' => $userAchievement->achievement->name,
+                'description' => $userAchievement->achievement->description,
+                'icon' => $userAchievement->achievement->icon,
+                'earned_at' => $userAchievement->earned_at,
+            ])->all();
         $averageScore = $scores->isEmpty() ? 0 : round($scores->avg(), 2);
 
         return [
@@ -94,6 +104,7 @@ class DashboardService
                 'next_nodes' => $gameSummary['next_nodes'],
             ],
             'rewards' => $recentRewards,
+            'achievements' => $achievements,
             'progress' => $progress,
             'completed_quizzes' => $completedAttempts->count(),
             'average_score_percent' => $averageScore,

@@ -14,6 +14,7 @@ class DashboardResource extends JsonResource
             'learning' => $this->resource['learning'],
             'game' => $this->resource['game'],
             'rewards' => $this->resource['rewards'],
+            'achievements' => $this->resource['achievements'],
             'progress' => $this->resource['progress'],
             'completed_quizzes' => $this->resource['completed_quizzes'],
             'average_score_percent' => $this->resource['average_score_percent'],

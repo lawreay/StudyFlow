@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             QuestionSeeder::class,
             GameWorldSeeder::class,
             GameNodeSeeder::class,
+            AchievementSeeder::class,
         ]);
     }
 }

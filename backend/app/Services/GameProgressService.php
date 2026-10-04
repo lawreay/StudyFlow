@@ -2,13 +2,15 @@
 
 namespace App\Services;
 
+use App\Models\Achievement;
+use App\Models\Attempt;
 use App\Models\GameNode;
 use App\Models\GameWorld;
-use App\Models\Attempt;
 use App\Models\PlayerNodeProgress;
 use App\Models\PlayerProgress;
 use App\Models\RewardEvent;
 use App\Models\User;
+use App\Models\UserAchievement;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -93,6 +95,7 @@ class GameProgressService
             $playerProgress = PlayerProgress::where('user_id', $user->id)->lockForUpdate()->first();
             $playerProgress ??= new PlayerProgress(['user_id' => $user->id]);
             $playerProgress->awardXp($node->reward_xp);
+            $this->awardWorldCompletionAchievement($user, $node->world);
 
             $nextAvailableNode = GameNode::where('world_id', $node->world_id)
                 ->with('topic')
@@ -137,6 +140,27 @@ class GameProgressService
             throw ValidationException::withMessages([
                 'required_score' => ['The completed topic quiz did not meet the required score.'],
             ]);
+        }
+    }
+
+    private function awardWorldCompletionAchievement(User $user, GameWorld $world): void
+    {
+        $worldNodeIds = GameNode::where('world_id', $world->id)->pluck('id');
+
+        if ($worldNodeIds->isEmpty() || PlayerNodeProgress::where('user_id', $user->id)
+            ->whereIn('game_node_id', $worldNodeIds)
+            ->whereNotNull('completed_at')
+            ->count() !== $worldNodeIds->count()) {
+            return;
+        }
+
+        $achievement = Achievement::where('trigger_key', "world_complete:{$world->slug}")->first();
+
+        if ($achievement !== null) {
+            UserAchievement::firstOrCreate(
+                ['user_id' => $user->id, 'achievement_id' => $achievement->id],
+                ['earned_at' => now()],
+            );
         }
     }
 
