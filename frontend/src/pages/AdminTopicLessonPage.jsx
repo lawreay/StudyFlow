@@ -7,6 +7,17 @@ function firstError(requestError) {
   return Object.values(requestError.errors || {}).flat()[0] || requestError.message || 'Could not save this lesson.';
 }
 
+const emptyPractice = {
+  question: '',
+  options: [
+    { id: 'option-1', label: '' },
+    { id: 'option-2', label: '' },
+  ],
+  correct_option_id: 'option-1',
+  correct_feedback: '',
+  incorrect_feedback: '',
+};
+
 export default function AdminTopicLessonPage() {
   const { topicId } = useParams();
   const { token } = useAuth();
@@ -28,6 +39,7 @@ export default function AdminTopicLessonPage() {
           lesson_title: response.data.lesson_title || '',
           lesson_summary: response.data.lesson_summary || '',
           lesson_content: response.data.lesson_content || [{ heading: '', body: '' }],
+          lesson_practice: response.data.lesson_practice || emptyPractice,
         });
       })
       .catch((requestError) => {
@@ -63,6 +75,44 @@ export default function AdminTopicLessonPage() {
       : { ...current, lesson_content: current.lesson_content.filter((_, sectionIndex) => sectionIndex !== index) });
   };
 
+  const updatePractice = (field, value) => {
+    setForm((current) => ({ ...current, lesson_practice: { ...current.lesson_practice, [field]: value } }));
+  };
+
+  const updatePracticeOption = (index, label) => {
+    setForm((current) => ({
+      ...current,
+      lesson_practice: {
+        ...current.lesson_practice,
+        options: current.lesson_practice.options.map((option, optionIndex) => optionIndex === index ? { ...option, label } : option),
+      },
+    }));
+  };
+
+  const addPracticeOption = () => {
+    setForm((current) => {
+      const optionNumber = current.lesson_practice.options.length + 1;
+      return {
+        ...current,
+        lesson_practice: {
+          ...current.lesson_practice,
+          options: [...current.lesson_practice.options, { id: `option-${optionNumber}`, label: '' }],
+        },
+      };
+    });
+  };
+
+  const removePracticeOption = (index) => {
+    setForm((current) => {
+      if (current.lesson_practice.options.length <= 2) return current;
+      const options = current.lesson_practice.options.filter((_, optionIndex) => optionIndex !== index);
+      const correctOptionId = options.some((option) => option.id === current.lesson_practice.correct_option_id)
+        ? current.lesson_practice.correct_option_id
+        : options[0].id;
+      return { ...current, lesson_practice: { ...current.lesson_practice, options, correct_option_id: correctOptionId } };
+    });
+  };
+
   const submit = async (event) => {
     event.preventDefault();
     setSaving(true);
@@ -75,6 +125,7 @@ export default function AdminTopicLessonPage() {
         lesson_title: form.lesson_title || null,
         lesson_summary: form.lesson_summary || null,
         lesson_content: form.lesson_content,
+        lesson_practice: form.lesson_practice,
       }, token);
       navigate('/admin/topics', { replace: true });
     } catch (requestError) {
@@ -112,6 +163,24 @@ export default function AdminTopicLessonPage() {
             </div>
           ))}
           <button type="button" className="secondary-button" disabled={form.lesson_content.length >= 20} onClick={addSection}>Add section</button>
+        </fieldset>
+        <fieldset className="admin-options-fieldset">
+          <legend>Mission check</legend>
+          <p>Give learners one focused question before they can complete the lesson.</p>
+          <label>Question<textarea value={form.lesson_practice.question} onChange={(event) => updatePractice('question', event.target.value)} required rows={3} maxLength="2000" /></label>
+          {form.lesson_practice.options.map((option, index) => (
+            <div className="admin-option-row" key={option.id}>
+              <label className="correct-radio">
+                <input type="radio" name="practice-correct-option" checked={form.lesson_practice.correct_option_id === option.id} onChange={() => updatePractice('correct_option_id', option.id)} />
+                <span>Correct</span>
+              </label>
+              <input value={option.label} onChange={(event) => updatePracticeOption(index, event.target.value)} aria-label={`Mission-check option ${index + 1}`} required maxLength="255" />
+              <button type="button" className="danger-button" disabled={form.lesson_practice.options.length <= 2} onClick={() => removePracticeOption(index)}>Remove</button>
+            </div>
+          ))}
+          <button type="button" className="secondary-button" disabled={form.lesson_practice.options.length >= 6} onClick={addPracticeOption}>Add option</button>
+          <label>Correct-answer feedback<textarea value={form.lesson_practice.correct_feedback} onChange={(event) => updatePractice('correct_feedback', event.target.value)} required rows={2} maxLength="2000" /></label>
+          <label>Try-again feedback<textarea value={form.lesson_practice.incorrect_feedback} onChange={(event) => updatePractice('incorrect_feedback', event.target.value)} required rows={2} maxLength="2000" /></label>
         </fieldset>
         <div className="form-actions">
           <Link className="secondary-button" to="/admin/topics">Cancel</Link>
