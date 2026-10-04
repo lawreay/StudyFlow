@@ -61,7 +61,7 @@ This is the implementation status, not a future feature list. Check an item only
 - [ ] Additional practice exercises beyond the lesson mission check and quiz flow.
 - [ ] Course model and course-management screens (subjects/topics exist, but a complete course-management system does not).
 - [ ] Project-based challenges with learner submissions and review criteria.
-- [ ] Dedicated achievement definitions and achievement badges (reward events are implemented; achievements are not).
+- [x] Dedicated achievement milestone for completing the Digital Foundations world, awarded server-side and shown on the learner dashboard.
 - [x] World-completion certificate issuance with unique certificate IDs and public verification.
 - [x] Learner certificate area for claiming and viewing verified certificates.
 - [ ] Downloadable, branded certificate documents.
