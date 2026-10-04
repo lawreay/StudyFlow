@@ -52,7 +52,7 @@ This is the implementation status, not a future feature list. Check an item only
 - [x] Learner-facing adventure map showing completed, available, and locked missions.
 - [x] Reward event tracking that prevents duplicate node-completion rewards.
 - [x] Admin dashboard and question management: create, edit, delete, filter, and import questions.
-- [x] Admin lesson-content editor for maintaining topic mission briefings and structured lesson sections.
+- [x] Admin lesson-content editor for maintaining topic mission briefings, structured lesson sections, and required mission checks.
 - [x] Floating learner companion with contextual guidance, minimise/reopen controls, and reduced-motion support.
 
 ### Next to build
