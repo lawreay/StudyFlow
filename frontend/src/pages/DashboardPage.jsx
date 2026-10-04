@@ -38,6 +38,7 @@ export default function DashboardPage() {
   const activeAttempt = dashboard?.active_attempt;
   const game = dashboard?.game;
   const nextMission = game?.next_nodes?.[0];
+  const achievements = dashboard?.achievements || [];
 
   return (
     <div className="learning-page dashboard-page">
@@ -71,6 +72,28 @@ export default function DashboardPage() {
                 {nextMission && <small>Next mission: <strong>{nextMission.name}</strong> · +{nextMission.reward_xp} XP</small>}
               </div>
               <Link to="/world" className="primary-button">View adventure</Link>
+            </section>
+          )}
+          {achievements.length > 0 && (
+            <section className="achievement-summary">
+              <div className="achievement-summary-heading">
+                <div>
+                  <p className="eyebrow">Milestones earned</p>
+                  <h2>Your achievements</h2>
+                </div>
+                <span>{achievements.length} earned</span>
+              </div>
+              <div className="achievement-list">
+                {achievements.map((achievement) => (
+                  <article className="achievement-card" key={achievement.id}>
+                    <span className="achievement-icon" aria-hidden="true">{achievement.icon}</span>
+                    <div>
+                      <h3>{achievement.name}</h3>
+                      <p>{achievement.description}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </section>
           )}
           {activeAttempt ? (
