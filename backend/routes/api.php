@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminQuestionController;
+use App\Http\Controllers\AdminTopicController;
 use App\Http\Controllers\AttemptController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CertificateController;
@@ -59,5 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/questions/{question}', [AdminQuestionController::class, 'update']);
         Route::delete('/questions/{question}', [AdminQuestionController::class, 'destroy']);
         Route::post('/topics/{topic}/questions/import', [AdminQuestionController::class, 'import']);
+        Route::get('/topics', [AdminTopicController::class, 'index']);
+        Route::get('/topics/{topic}', [AdminTopicController::class, 'show']);
+        Route::put('/topics/{topic}', [AdminTopicController::class, 'update']);
     });
 });
