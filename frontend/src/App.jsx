@@ -19,6 +19,8 @@ import LessonPage from './pages/LessonPage';
 import CertificatesPage from './pages/CertificatesPage';
 import VerifyCertificatePage from './pages/VerifyCertificatePage';
 import ProfilePage from './pages/ProfilePage';
+import AdminTopicsPage from './pages/AdminTopicsPage';
+import AdminTopicLessonPage from './pages/AdminTopicLessonPage';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -104,6 +106,8 @@ function App() {
           <Route path="/attempts/:attemptId/results" element={<ProtectedRoute><ResultsPage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><AdminRoute><AdminDashboardPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/questions" element={<ProtectedRoute><AdminRoute><QuestionListPage /></AdminRoute></ProtectedRoute>} />
+          <Route path="/admin/topics" element={<ProtectedRoute><AdminRoute><AdminTopicsPage /></AdminRoute></ProtectedRoute>} />
+          <Route path="/admin/topics/:topicId/edit" element={<ProtectedRoute><AdminRoute><AdminTopicLessonPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/questions/new" element={<ProtectedRoute><AdminRoute><QuestionFormPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/questions/:questionId/edit" element={<ProtectedRoute><AdminRoute><QuestionFormPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/import" element={<ProtectedRoute><AdminRoute><QuestionImportPage /></AdminRoute></ProtectedRoute>} />

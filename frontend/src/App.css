@@ -1271,6 +1271,49 @@ input {
   border-bottom: 1px solid #cbd5e1;
 }
 
+.admin-topic-list {
+  border-top: 1px solid #cbd5e1;
+}
+
+.admin-topic-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.admin-topic-row h2 {
+  margin: 0.45rem 0;
+  font-size: 1.05rem;
+}
+
+.admin-topic-row p {
+  margin: 0;
+  color: #64748b;
+}
+
+.lesson-editor-section {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.9rem;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.lesson-editor-section label {
+  display: grid;
+  gap: 0.35rem;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.lesson-editor-section .danger-button {
+  justify-self: start;
+}
+
 .admin-question-info h2 {
   margin: 0.45rem 0;
   font-size: 1.05rem;
@@ -1585,6 +1628,11 @@ input {
   }
 
   .admin-question-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-topic-row {
     align-items: flex-start;
     flex-direction: column;
   }
