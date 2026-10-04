@@ -31,11 +31,22 @@ class TopicManagementTest extends TestCase
                     ['heading' => 'The big idea', 'body' => 'Routers move traffic between networks.'],
                     ['heading' => 'Mission clue', 'body' => 'Find the device that connects separate networks.'],
                 ],
+                'lesson_practice' => [
+                    'question' => 'Which device selects a route?',
+                    'options' => [
+                        ['id' => 'router', 'label' => 'Router'],
+                        ['id' => 'switch', 'label' => 'Switch'],
+                    ],
+                    'correct_option_id' => 'router',
+                    'correct_feedback' => 'Correct. Routers connect networks.',
+                    'incorrect_feedback' => 'Try again. Think about paths between networks.',
+                ],
             ])
             ->assertOk()
             ->assertJsonPath('data.name', 'Routing Basics')
             ->assertJsonPath('data.subject_name', 'Networking')
-            ->assertJsonPath('data.lesson_content.1.heading', 'Mission clue');
+            ->assertJsonPath('data.lesson_content.1.heading', 'Mission clue')
+            ->assertJsonPath('data.lesson_practice.correct_option_id', 'router');
 
         $this->assertDatabaseHas('topics', [
             'id' => $topic->id,
