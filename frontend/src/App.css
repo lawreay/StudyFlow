@@ -886,6 +886,142 @@ input {
   font-weight: 400;
 }
 
+.project-challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+.project-challenge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.35rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 1rem;
+  background: linear-gradient(145deg, #fff, #f0f9ff);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+}
+
+.project-challenge-card-heading {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.project-icon {
+  display: grid;
+  width: 2.8rem;
+  height: 2.8rem;
+  place-items: center;
+  border-radius: 0.8rem;
+  background: #dbeafe;
+  font-size: 1.35rem;
+}
+
+.project-challenge-card h2 {
+  margin: 0.3rem 0 0.65rem;
+  font-size: 1.2rem;
+}
+
+.project-challenge-card > p:not(.eyebrow):not(.project-requirements-count) {
+  flex: 1;
+  margin-top: 0;
+  color: #475569;
+}
+
+.project-requirements-count {
+  margin: 0.4rem 0 1rem;
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.project-status {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.project-status.is-submitted { background: #dbeafe; color: #1d4ed8; }
+.project-status.is-needs_revision { background: #fef3c7; color: #92400e; }
+.project-status.is-approved { background: #dcfce7; color: #166534; }
+
+.project-brief {
+  margin: 1.5rem 0;
+  padding: clamp(1.4rem, 5vw, 2.5rem);
+  border: 1px solid #bfdbfe;
+  border-radius: 1.2rem;
+  background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+}
+
+.project-brief h1 { margin: 0.4rem 0 0.8rem; }
+.project-brief > p:last-child { max-width: 42rem; color: #334155; font-size: 1.05rem; }
+
+.project-requirements,
+.project-review,
+.project-submission-form {
+  margin-top: 1.25rem;
+}
+
+.project-requirements h2,
+.project-review h2,
+.project-submission-form h2 { margin: 0.5rem 0; font-size: 1.15rem; }
+
+.project-requirements ol {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1rem 0 0;
+  padding-left: 1.4rem;
+}
+
+.project-requirements li { padding-left: 0.25rem; color: #334155; }
+
+.project-review {
+  border-color: #bfdbfe;
+  background: #f8fbff;
+}
+
+.project-review.is-needs_revision { border-color: #fde68a; background: #fffbeb; }
+.project-review.is-approved { border-color: #bbf7d0; background: #f0fdf4; }
+.project-review > p { color: #475569; }
+
+.project-submission-form {
+  display: grid;
+  gap: 1rem;
+  padding: 1.35rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 1rem;
+  background: white;
+}
+
+.project-submission-form > div > p:last-child { margin-bottom: 0; color: #64748b; }
+
+.project-submission-form label {
+  display: grid;
+  gap: 0.45rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.project-submission-form label span { color: #64748b; font-size: 0.85rem; font-weight: 400; }
+
+.project-submission-form textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.8rem;
+  font: inherit;
+}
+
 .verification-card dl {
   text-align: left;
 }

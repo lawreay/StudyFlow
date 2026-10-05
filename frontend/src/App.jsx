@@ -21,6 +21,8 @@ import VerifyCertificatePage from './pages/VerifyCertificatePage';
 import ProfilePage from './pages/ProfilePage';
 import AdminTopicsPage from './pages/AdminTopicsPage';
 import AdminTopicLessonPage from './pages/AdminTopicLessonPage';
+import ProjectChallengesPage from './pages/ProjectChallengesPage';
+import ProjectChallengePage from './pages/ProjectChallengePage';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -59,6 +61,7 @@ function App() {
               <NavLink to="/dashboard">Dashboard</NavLink>
               <NavLink to="/subjects">Study</NavLink>
               <NavLink to="/world">Adventure</NavLink>
+              <NavLink to="/projects">Projects</NavLink>
               <NavLink to="/certificates">Certificates</NavLink>
               {user?.is_admin && <NavLink to="/admin">Admin</NavLink>}
             </>
@@ -99,6 +102,8 @@ function App() {
           <Route path="/subjects" element={<ProtectedRoute><SubjectSelectionPage /></ProtectedRoute>} />
           <Route path="/subjects/:subjectId/topics" element={<ProtectedRoute><TopicSelectionPage /></ProtectedRoute>} />
           <Route path="/world" element={<ProtectedRoute><GameWorldPage /></ProtectedRoute>} />
+          <Route path="/projects" element={<ProtectedRoute><ProjectChallengesPage /></ProtectedRoute>} />
+          <Route path="/projects/:challengeId" element={<ProtectedRoute><ProjectChallengePage /></ProtectedRoute>} />
           <Route path="/certificates" element={<ProtectedRoute><CertificatesPage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/topics/:topicId/lesson" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
