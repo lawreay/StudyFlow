@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminProjectChallengeController;
 use App\Http\Controllers\AdminQuestionController;
 use App\Http\Controllers\AdminTopicController;
 use App\Http\Controllers\AttemptController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\GameProgressController;
 use App\Http\Controllers\GameWorldController;
 use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\ProjectChallengeController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TopicLessonController;
@@ -33,6 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/subjects', [SubjectController::class, 'index']);
     Route::get('/subjects/{subject}', [SubjectController::class, 'show']);
+    Route::get('/project-challenges', [ProjectChallengeController::class, 'index']);
+    Route::get('/project-challenges/{challenge}', [ProjectChallengeController::class, 'show']);
+    Route::post('/project-challenges/{challenge}/submissions', [ProjectChallengeController::class, 'submit']);
     Route::get('/topics/{topic}/lesson', [TopicLessonController::class, 'show']);
     Route::post('/topics/{topic}/lesson/practice', [TopicLessonController::class, 'checkPractice']);
     Route::post('/topics/{topic}/lesson/complete', [TopicLessonController::class, 'complete']);
@@ -63,5 +68,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/topics', [AdminTopicController::class, 'index']);
         Route::get('/topics/{topic}', [AdminTopicController::class, 'show']);
         Route::put('/topics/{topic}', [AdminTopicController::class, 'update']);
+        Route::get('/project-challenges', [AdminProjectChallengeController::class, 'index']);
+        Route::post('/project-challenges', [AdminProjectChallengeController::class, 'store']);
+        Route::get('/project-challenges/{challenge}', [AdminProjectChallengeController::class, 'show']);
+        Route::put('/project-challenges/{challenge}', [AdminProjectChallengeController::class, 'update']);
+        Route::get('/project-challenges/{challenge}/submissions', [AdminProjectChallengeController::class, 'submissions']);
+        Route::patch('/project-submissions/{submission}/review', [AdminProjectChallengeController::class, 'review']);
     });
 });
