@@ -83,8 +83,8 @@ MySQL Database
 Rules:
 
 - React must NEVER connect directly to MySQL.
+- No jumping ahead with uncommitted work
 - Business logic belongs in Laravel.
-- push after Each big change and add this file to git ignore.
 - Database queries should not exist inside React.
 - Keep frontend and backend responsibilities separated.
 
