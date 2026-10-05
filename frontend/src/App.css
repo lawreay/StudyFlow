@@ -1022,6 +1022,101 @@ input {
   font: inherit;
 }
 
+.admin-project-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.9fr);
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.admin-project-list-heading,
+.admin-project-row,
+.admin-project-row-actions,
+.admin-submission-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-project-list-heading h2 { margin: 0; font-size: 1.15rem; }
+
+.admin-project-list { margin-top: 1rem; border-top: 1px solid #cbd5e1; }
+
+.admin-project-row {
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.admin-project-row h3 { margin: 0.4rem 0 0; font-size: 1rem; }
+.admin-project-row-actions { flex: 0 0 auto; }
+
+.admin-project-form,
+.admin-submission-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #bfdbfe;
+  border-radius: 1rem;
+  background: #f8fbff;
+}
+
+.admin-project-form > label,
+.admin-review-form label {
+  display: grid;
+  gap: 0.4rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.admin-project-form label span { color: #64748b; font-size: 0.85rem; font-weight: 400; }
+
+.admin-project-form select,
+.admin-project-form textarea,
+.admin-review-form select,
+.admin-review-form textarea {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.8rem;
+  background: white;
+  color: #0f172a;
+  font: inherit;
+}
+
+.admin-project-form textarea,
+.admin-review-form textarea { resize: vertical; }
+
+.admin-project-requirement {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+}
+
+.admin-project-active {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 0.65rem;
+  cursor: pointer;
+}
+
+.admin-project-active input { width: auto; margin-top: 0.2rem; accent-color: #2563eb; }
+.admin-project-active span { display: grid; gap: 0.2rem; }
+.admin-project-active small { color: #64748b; font-weight: 400; }
+
+.admin-submission-list { display: grid; gap: 1rem; }
+.admin-submission-heading { align-items: flex-start; }
+.admin-submission-heading h2 { margin: 0; font-size: 1.1rem; }
+.admin-submission-heading p { margin: 0.2rem 0 0; color: #64748b; }
+.admin-submission-notes { margin: 0; color: #475569; font-style: italic; }
+
+.admin-review-form { display: grid; gap: 0.9rem; padding-top: 1rem; border-top: 1px solid #dbeafe; }
+
+@media (max-width: 800px) {
+  .admin-project-workspace { grid-template-columns: 1fr; }
+}
+
 .verification-card dl {
   text-align: left;
 }

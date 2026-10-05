@@ -36,6 +36,7 @@ export default function AdminDashboardPage() {
         <div className="admin-actions">
           <Link className="secondary-button" to="/admin/questions">Question bank</Link>
           <Link className="secondary-button" to="/admin/topics">Lesson content</Link>
+          <Link className="secondary-button" to="/admin/projects">Project challenges</Link>
           <Link className="primary-button" to="/admin/import">Import CSV</Link>
         </div>
       </header>

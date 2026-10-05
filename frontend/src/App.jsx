@@ -23,6 +23,8 @@ import AdminTopicsPage from './pages/AdminTopicsPage';
 import AdminTopicLessonPage from './pages/AdminTopicLessonPage';
 import ProjectChallengesPage from './pages/ProjectChallengesPage';
 import ProjectChallengePage from './pages/ProjectChallengePage';
+import AdminProjectChallengesPage from './pages/AdminProjectChallengesPage';
+import AdminProjectSubmissionsPage from './pages/AdminProjectSubmissionsPage';
 import './App.css';
 
 function ProtectedRoute({ children }) {
@@ -113,6 +115,8 @@ function App() {
           <Route path="/admin/questions" element={<ProtectedRoute><AdminRoute><QuestionListPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/topics" element={<ProtectedRoute><AdminRoute><AdminTopicsPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/topics/:topicId/edit" element={<ProtectedRoute><AdminRoute><AdminTopicLessonPage /></AdminRoute></ProtectedRoute>} />
+          <Route path="/admin/projects" element={<ProtectedRoute><AdminRoute><AdminProjectChallengesPage /></AdminRoute></ProtectedRoute>} />
+          <Route path="/admin/projects/:challengeId/submissions" element={<ProtectedRoute><AdminRoute><AdminProjectSubmissionsPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/questions/new" element={<ProtectedRoute><AdminRoute><QuestionFormPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/questions/:questionId/edit" element={<ProtectedRoute><AdminRoute><QuestionFormPage /></AdminRoute></ProtectedRoute>} />
           <Route path="/admin/import" element={<ProtectedRoute><AdminRoute><QuestionImportPage /></AdminRoute></ProtectedRoute>} />
